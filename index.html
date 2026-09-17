@@ -5,253 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Подготовка к тестам</title>
     <style>
-        :root {
-            --bg-color: #2c3e50;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --primary: #4a6741;
-            --primary-hover: #3b5334;
-            --correct: #27ae60;
-            --wrong: #e74c3c;
-            --border: #ccc;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-        }
-
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 20px;
-        }
-
-        header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .menu {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .menu button {
-            background-color: var(--card-bg);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            color: var(--text-main);
-            transition: all 0.3s;
-            font-size: 15px;
-        }
-
-        .menu button.active {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .menu button:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        #app {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .question-text {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        .question-image {
-            max-width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            display: block;
-            border: 1px solid var(--border);
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .option-btn {
-            background-color: #f4f4f4;
-            border: 2px solid var(--border);
-            padding: 15px;
-            text-align: left;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-
-        .option-btn:hover:not(:disabled) {
-            background-color: #e0e0e0;
-            border-color: #999;
-        }
-
-        .option-btn.correct {
-            background-color: #d4edda;
-            border-color: var(--correct);
-            color: #155724;
-            font-weight: bold;
-        }
-
-        .option-btn.wrong {
-            background-color: #f8d7da;
-            border-color: var(--wrong);
-            color: #721c24;
-        }
-
-        .option-btn:disabled {
-            cursor: not-allowed;
-        }
-
-        .controls {
-            margin-top: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.2s;
-            font-family: inherit;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background-color: var(--primary-hover);
-        }
-
-        .btn-primary:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-
-        .progress {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .marathon-stats {
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-        .result-screen {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .result-screen h2 {
-            color: var(--primary);
-            margin-top: 0;
-        }
-
-        .result-score {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 20px 0;
-        }
-
-        .flashcard-reveal {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e8f4f8;
-            border-left: 5px solid #3498db;
-            border-radius: 5px;
-            display: none;
-            font-size: 16px;
-        }
-
-        .flashcard-reveal.show {
-            display: block;
-        }
-        
-        .custom-note {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #666;
-            font-style: italic;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .stats-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 15px;
-        }
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-            font-size: 16px;
-        }
-        .stats-row:last-child {
-            border-bottom: none;
-        }
-        .copy-btn {
-            margin-top: 20px;
-            width: 100%;
-            background-color: #3498db;
-        }
-        .copy-btn:hover {
-            background-color: #2980b9;
-        }
+        :root { --bg-color: #2c3e50; --card-bg: #ffffff; --text-main: #333333; --primary: #4a6741; --primary-hover: #3b5334; --correct: #27ae60; --wrong: #e74c3c; --border: #ccc; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 800px; }
+        header { text-align: center; color: white; margin-bottom: 20px; }
+        header h1 { font-size: 24px; margin-bottom: 5px; }
+        .menu { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .menu button { background-color: var(--card-bg); border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; color: var(--text-main); transition: all 0.3s; font-size: 15px; }
+        .menu button.active { background-color: var(--primary); color: white; }
+        .menu button:hover { opacity: 0.9; transform: translateY(-2px); }
+        #app { background-color: var(--card-bg); padding: 25px; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); min-height: 400px; display: flex; flex-direction: column; justify-content: center; }
+        .question-text { font-size: 18px; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
+        .question-image { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 5px; margin-bottom: 15px; display: block; border: 1px solid var(--border); }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .option-btn { background-color: #f4f4f4; border: 2px solid var(--border); padding: 15px; text-align: left; border-radius: 5px; cursor: pointer; font-size: 16px; transition: all 0.2s; font-family: inherit; }
+        .option-btn:hover:not(:disabled) { background-color: #e0e0e0; border-color: #999; }
+        .option-btn.correct { background-color: #d4edda; border-color: var(--correct); color: #155724; font-weight: bold; }
+        .option-btn.wrong { background-color: #f8d7da; border-color: var(--wrong); color: #721c24; }
+        .option-btn:disabled { cursor: not-allowed; }
+        .controls { margin-top: 25px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .btn-primary { background-color: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; font-family: inherit; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--primary-hover); }
+        .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
+        .progress { font-size: 14px; color: #666; margin-bottom: 10px; }
+        .marathon-stats { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary); margin-bottom: 15px; font-size: 16px; }
+        .result-screen { text-align: center; padding: 20px; }
+        .result-screen h2 { color: var(--primary); margin-top: 0; }
+        .result-score { font-size: 36px; font-weight: bold; margin: 20px 0; }
+        .flashcard-reveal { margin-top: 20px; padding: 15px; background-color: #e8f4f8; border-left: 5px solid #3498db; border-radius: 5px; display: none; font-size: 16px; }
+        .flashcard-reveal.show { display: block; }
+        .custom-note { margin-top: 15px; font-size: 14px; color: #666; font-style: italic; background: #f9f9f9; padding: 10px; border-radius: 5px; }
+        .stats-card { background: #f8f9fa; border-radius: 8px; padding: 20px; margin-top: 15px; }
+        .stats-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 16px; }
+        .stats-row:last-child { border-bottom: none; }
+        .copy-btn { margin-top: 20px; width: 100%; background-color: #3498db; }
+        .copy-btn:hover { background-color: #2980b9; }
     </style>
 </head>
 <body>
@@ -270,25 +58,20 @@
         <button id="btn-stats" onclick="setMode('stats')">📊 Профиль</button>
     </div>
 
-    <div id="app">
-        <!-- Контент загружается через JS -->
-    </div>
+    <div id="app"></div>
 </div>
 
 <script>
     // ==========================================
-    // НАСТРОЙКА GOOGLE ТАБЛИЦЫ
+    // ВСТАВЬ СЮДА ССЫЛКУ ИЗ GOOGLE APPS SCRIPT
     // ==========================================
-    // ВСТАВЬ СЮДА ССЫЛКУ, КОТОРУЮ ТЫ СКОПИРОВАЛ В ШАГЕ 1
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUh-V32OmirSkF_cxC9mZNifcpBOZGiEIGEfDI3YlHys1PGeY_QEhtRMFXMPpgXr8r/exec';
+    const GOOGLE_SCRIPT_URL = 'ВСТАВЬ_СЮДА_СВОЙ_URL';
 
     // ==========================================
-    // БАЗА ВОПРОСОВ (все 80 штук)
+    // БАЗА ВОПРОСОВ
     // ==========================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUh-V32OmirSkF_cxC9mZNifcpBOZGiEIGEfDI3YlHys1PGeY_QEhtRMFXMPpgXr8r/exec';
-
     const allQuestions = [
-        { id: 1, question: "Какое воинское звание приведено на фото?", options: ["Полковник", "Старший лейтенант", "Подполковник", "Генерал-полковник"], correct: [0], image: "img/q1.jpg" },
+        { id: 1, question: "Какое воинское звание приведено на фото?", options: ["Полковник", "Старший лейтенант", "Подполковник", "Генерал-полковник"], correct: [2], image: "img/q1.jpg" },
         { id: 2, question: "Какое воинское звание следует после воинского звания «Капитан»?", options: ["Подполковник", "Старший лейтенант", "Майор", "Старшина"], correct: [2], image: null },
         { id: 3, question: "Какое воинское звание соответствует корабельному званию «Капитан 2-го ранга»?", options: ["Подполковник", "Капитан", "Майор", "Полковник"], correct: [0], image: null },
         { id: 4, question: "Какое корабельное воинское звание изображено на погоне?", options: ["Старшина 2 статьи", "Главный корабельный старшина", "Главный старшина", "Старшина 1 статьи"], correct: [0], image: "img/q4.jpg" },
@@ -374,27 +157,13 @@
     // СИСТЕМА СТАТИСТИКИ И ПРОФИЛЯ
     // ==========================================
     let userProfile = localStorage.getItem('userProfile');
-    let stats = JSON.parse(localStorage.getItem('userStats')) || {
-        marathonBest: 0,
-        examHistory: [],
-        studyAnswered: 0,
-        studyCorrect: 0,
-        flashcardViewed: 0
-    };
-
-    function saveStats() {
-        localStorage.setItem('userStats', JSON.stringify(stats));
-    }
-
+    let stats = JSON.parse(localStorage.getItem('userStats')) || { marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 };
+    function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); }
     function initProfile() {
         if (!userProfile) {
             userProfile = prompt("Введите ваше имя или фамилию (для статистики):");
-            if (userProfile && userProfile.trim() !== "") {
-                userProfile = userProfile.trim();
-                localStorage.setItem('userProfile', userProfile);
-            } else {
-                userProfile = "Неизвестный";
-            }
+            if (userProfile && userProfile.trim() !== "") { userProfile = userProfile.trim(); localStorage.setItem('userProfile', userProfile); } 
+            else { userProfile = "Неизвестный"; }
         }
     }
 
@@ -402,465 +171,132 @@
     // ОТПРАВКА В GOOGLE ТАБЛИЦУ
     // ==========================================
     function sendResultToGoogle(mode, score, total, details = '') {
-        if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('ВСТАВЬ_СЮДА_СВОЙ_URL')) {
-            console.log('URL для Google Script не настроен. Результат не отправлен.');
-            return;
-        }
-        
-        const data = {
-            name: userProfile,
-            mode: mode,
-            score: score,
-            total: total,
-            percent: total > 0 ? Math.round((score / total) * 100) : 0,
-            details: details
-        };
-
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => console.log('Результат отправлен в Google Sheets'))
-        .catch(error => console.error('Ошибка отправки:', error));
+        if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('ВСТАВЬ_СЮДА_СВОЙ_URL')) { console.log('URL не настроен.'); return; }
+        const data = { name: userProfile, mode: mode, score: score, total: total, percent: total > 0 ? Math.round((score / total) * 100) : 0, details: details };
+        fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', cache: 'no-cache', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+        .then(() => console.log('Отправлено в Google Sheets')).catch(error => console.error('Ошибка:', error));
     }
 
     // ==========================================
     // ЛОГИКА САЙТА
     // ==========================================
-    let currentMode = 'study';
-    let currentIndex = 0;
-    let studyQuestions = [];
-    let examQuestions = [];
-    let userAnswers = {};
-    let showFlashcardAnswer = false;
-    let marathonStreak = 0;
-    let currentMarathonQ = null;
-
+    let currentMode = 'study', currentIndex = 0, studyQuestions = [], examQuestions = [], userAnswers = {}, showFlashcardAnswer = false, marathonStreak = 0, currentMarathonQ = null;
     const app = document.getElementById('app');
-    const btnStudy = document.getElementById('btn-study');
-    const btnExam = document.getElementById('btn-exam');
-    const btnFlash = document.getElementById('btn-flash');
-    const btnMarathon = document.getElementById('btn-marathon');
-    const btnStats = document.getElementById('btn-stats');
+    const btnStudy = document.getElementById('btn-study'), btnExam = document.getElementById('btn-exam'), btnFlash = document.getElementById('btn-flash'), btnMarathon = document.getElementById('btn-marathon'), btnStats = document.getElementById('btn-stats');
 
     function setMode(mode) {
-        currentMode = mode;
-        currentIndex = 0;
-        userAnswers = {};
-        showFlashcardAnswer = false;
-        
+        currentMode = mode; currentIndex = 0; userAnswers = {}; showFlashcardAnswer = false;
         [btnStudy, btnExam, btnFlash, btnMarathon, btnStats].forEach(btn => btn.classList.remove('active'));
-        
-        if (mode === 'study') {
-            btnStudy.classList.add('active');
-            studyQuestions = shuffle([...allQuestions]);
-            renderStudy();
-        } else if (mode === 'exam') {
-            btnExam.classList.add('active');
-            startExam();
-        } else if (mode === 'flash') {
-            btnFlash.classList.add('active');
-            renderFlashcard();
-        } else if (mode === 'marathon') {
-            btnMarathon.classList.add('active');
-            startMarathon();
-        } else if (mode === 'stats') {
-            btnStats.classList.add('active');
-            renderStats();
-        }
+        if (mode === 'study') { btnStudy.classList.add('active'); studyQuestions = shuffle([...allQuestions]); renderStudy(); } 
+        else if (mode === 'exam') { btnExam.classList.add('active'); startExam(); } 
+        else if (mode === 'flash') { btnFlash.classList.add('active'); renderFlashcard(); } 
+        else if (mode === 'marathon') { btnMarathon.classList.add('active'); startMarathon(); } 
+        else if (mode === 'stats') { btnStats.classList.add('active'); renderStats(); }
     }
-
-    function shuffle(array) {
-        return array.sort(() => Math.random() - 0.5);
-    }
+    function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
     // --- РЕЖИМ ОБУЧЕНИЯ ---
     function renderStudy() {
-        if (currentIndex >= studyQuestions.length) {
-            app.innerHTML = `
-                <div class="result-screen">
-                    <h2>Обучение завершено!</h2>
-                    <p>Вы прошли все доступные вопросы.</p>
-                    <button class="btn-primary" onclick="setMode('study')">Начать заново</button>
-                </div>
-            `;
-            return;
-        }
-
+        if (currentIndex >= studyQuestions.length) { app.innerHTML = `<div class="result-screen"><h2>Обучение завершено!</h2><p>Вы прошли все доступные вопросы.</p><button class="btn-primary" onclick="setMode('study')">Начать заново</button></div>`; return; }
         const q = studyQuestions[currentIndex];
-        let html = `
-            <div class="progress">Вопрос ${currentIndex + 1} из ${studyQuestions.length}</div>
-            <div class="question-text">${q.question}</div>
-        `;
-
-        if (q.image) {
-            html += `<img src="${q.image}" alt="Изображение к вопросу" class="question-image" onerror="this.style.display='none'">`;
-        }
-
+        let html = `<div class="progress">Вопрос ${currentIndex + 1} из ${studyQuestions.length}</div><div class="question-text">${q.question}</div>`;
+        if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         html += `<div class="options">`;
-        q.options.forEach((opt, index) => {
-            html += `<button class="option-btn" onclick="checkStudyAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`;
-        });
+        q.options.forEach((opt, index) => { html += `<button class="option-btn" onclick="checkStudyAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`; });
         html += `</div>`;
-
-        if (q.customNote) {
-             html += `<div class="custom-note">${q.customNote}</div>`;
-        }
-
-        html += `
-            <div class="controls">
-                <button class="btn-primary" id="next-btn" style="display:none;" onclick="nextStudyQuestion()">Следующий вопрос →</button>
-            </div>
-        `;
-
+        if (q.customNote) { html += `<div class="custom-note">${q.customNote}</div>`; }
+        html += `<div class="controls"><button class="btn-primary" id="next-btn" style="display:none;" onclick="nextStudyQuestion()">Следующий вопрос →</button></div>`;
         app.innerHTML = html;
     }
-
     function checkStudyAnswer(selectedIndex, correctIndices) {
-        const buttons = document.querySelectorAll('.option-btn');
-        const isCorrect = correctIndices.includes(selectedIndex);
-
-        stats.studyAnswered++;
-        if (isCorrect) stats.studyCorrect++;
-        saveStats();
-
-        buttons.forEach((btn, index) => {
-            btn.disabled = true;
-            if (correctIndices.includes(index)) {
-                btn.classList.add('correct');
-            } else if (index === selectedIndex) {
-                btn.classList.add('wrong');
-            }
-        });
-
-        if (isCorrect) {
-            // ОПТИМИЗАЦИЯ: Автоматический переход через 0.8 секунды
-            setTimeout(() => {
-                nextStudyQuestion();
-            }, 800); 
-        } else {
-            document.getElementById('next-btn').style.display = 'block';
-        }
+        const buttons = document.querySelectorAll('.option-btn'); const isCorrect = correctIndices.includes(selectedIndex);
+        stats.studyAnswered++; if (isCorrect) stats.studyCorrect++; saveStats();
+        buttons.forEach((btn, index) => { btn.disabled = true; if (correctIndices.includes(index)) { btn.classList.add('correct'); } else if (index === selectedIndex) { btn.classList.add('wrong'); } });
+        if (isCorrect) { setTimeout(() => { nextStudyQuestion(); }, 800); } else { document.getElementById('next-btn').style.display = 'block'; }
     }
-
-    function nextStudyQuestion() {
-        currentIndex++;
-        renderStudy();
-    }
+    function nextStudyQuestion() { currentIndex++; renderStudy(); }
 
     // --- РЕЖИМ ЭКЗАМЕНА ---
-    function startExam() {
-        const shuffled = shuffle([...allQuestions]);
-        examQuestions = shuffled.slice(0, Math.min(20, shuffled.length));
-        currentIndex = 0;
-        renderExam();
-    }
-
+    function startExam() { const shuffled = shuffle([...allQuestions]); examQuestions = shuffled.slice(0, Math.min(20, shuffled.length)); currentIndex = 0; renderExam(); }
     function renderExam() {
-        if (currentIndex >= examQuestions.length) {
-            renderExamResults();
-            return;
-        }
-
+        if (currentIndex >= examQuestions.length) { renderExamResults(); return; }
         const q = examQuestions[currentIndex];
-        let html = `
-            <div class="progress">Вопрос ${currentIndex + 1} из ${examQuestions.length}</div>
-            <div class="question-text">${q.question}</div>
-        `;
-
-        if (q.image) {
-            html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`;
-        }
-
+        let html = `<div class="progress">Вопрос ${currentIndex + 1} из ${examQuestions.length}</div><div class="question-text">${q.question}</div>`;
+        if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         html += `<div class="options">`;
-        q.options.forEach((opt, index) => {
-            const isSelected = userAnswers[q.id] && userAnswers[q.id].includes(index);
-            const checked = isSelected ? 'style="border-color: var(--primary); background-color: #eef2ed;"' : '';
-            html += `<button class="option-btn" ${checked} onclick="selectExamAnswer(${index})">${opt}</button>`;
-        });
-        html += `</div>
-            <div class="controls">
-                <button class="btn-primary" id="exam-next-btn" onclick="nextExamQuestion()">
-                    ${currentIndex === examQuestions.length - 1 ? 'Завершить тест' : 'Следующий вопрос →'}
-                </button>
-            </div>
-        `;
-
+        q.options.forEach((opt, index) => { const isSelected = userAnswers[q.id] && userAnswers[q.id].includes(index); const checked = isSelected ? 'style="border-color: var(--primary); background-color: #eef2ed;"' : ''; html += `<button class="option-btn" ${checked} onclick="selectExamAnswer(${index})">${opt}</button>`; });
+        html += `</div><div class="controls"><button class="btn-primary" id="exam-next-btn" onclick="nextExamQuestion()">${currentIndex === examQuestions.length - 1 ? 'Завершить тест' : 'Следующий вопрос →'}</button></div>`;
         app.innerHTML = html;
     }
-
     function selectExamAnswer(index) {
-        const q = examQuestions[currentIndex];
-        if (!userAnswers[q.id]) {
-            userAnswers[q.id] = [];
-        }
-        
-        if (userAnswers[q.id].includes(index)) {
-            userAnswers[q.id] = userAnswers[q.id].filter(i => i !== index);
-        } else {
-            userAnswers[q.id].push(index);
-        }
-        
-        if (q.correct.length === 1 && userAnswers[q.id].length > 1) {
-            userAnswers[q.id] = [index];
-        }
-        
+        const q = examQuestions[currentIndex]; if (!userAnswers[q.id]) { userAnswers[q.id] = []; }
+        if (userAnswers[q.id].includes(index)) { userAnswers[q.id] = userAnswers[q.id].filter(i => i !== index); } else { userAnswers[q.id].push(index); }
+        if (q.correct.length === 1 && userAnswers[q.id].length > 1) { userAnswers[q.id] = [index]; }
         renderExam(); 
     }
-
-    function nextExamQuestion() {
-        currentIndex++;
-        renderExam();
-    }
-
+    function nextExamQuestion() { currentIndex++; renderExam(); }
     function renderExamResults() {
         let correctCount = 0;
-        examQuestions.forEach(q => {
-            const userAnswer = userAnswers[q.id] || [];
-            const correctArray = q.correct;
-            
-            const isCorrect = userAnswer.length === correctArray.length && 
-                              userAnswer.every(val => correctArray.includes(val));
-            if (isCorrect) {
-                correctCount++;
-            }
-        });
-
+        examQuestions.forEach(q => { const userAnswer = userAnswers[q.id] || []; const correctArray = q.correct; const isCorrect = userAnswer.length === correctArray.length && userAnswer.every(val => correctArray.includes(val)); if (isCorrect) { correctCount++; } });
         const score = Math.round((correctCount / examQuestions.length) * 100);
-        
-        stats.examHistory.push({
-            date: new Date().toLocaleDateString('ru-RU'),
-            score: score,
-            total: examQuestions.length,
-            correct: correctCount
-        });
-        saveStats();
-
-        // ОТПРАВКА РЕЗУЛЬТАТА В GOOGLE ТАБЛИЦУ
+        stats.examHistory.push({ date: new Date().toLocaleDateString('ru-RU'), score: score, total: examQuestions.length, correct: correctCount }); saveStats();
         sendResultToGoogle('Экзамен', correctCount, examQuestions.length, `Оценка: ${score >= 80 ? '5' : score >= 60 ? '4' : score >= 40 ? '3' : '2'}`);
-
-        let grade = "2";
-        if (score >= 80) grade = "5";
-        else if (score >= 60) grade = "4";
-        else if (score >= 40) grade = "3";
-
-        app.innerHTML = `
-            <div class="result-screen">
-                <h2>Экзамен завершен!</h2>
-                <div class="result-score" style="color: ${score >= 60 ? 'var(--correct)' : 'var(--wrong)'}">
-                    ${correctCount} / ${examQuestions.length} (${score}%)
-                </div>
-                <p>Ваша оценка: <strong>${grade}</strong></p>
-                <button class="btn-primary" onclick="setMode('exam')" style="margin-top:20px;">Пройти еще раз</button>
-                <button class="btn-primary" onclick="setMode('study')" style="margin-top:20px; background-color: #666;">В режим обучения</button>
-            </div>
-        `;
+        let grade = "2"; if (score >= 80) grade = "5"; else if (score >= 60) grade = "4"; else if (score >= 40) grade = "3";
+        app.innerHTML = `<div class="result-screen"><h2>Экзамен завершен!</h2><div class="result-score" style="color: ${score >= 60 ? 'var(--correct)' : 'var(--wrong)'}">${correctCount} / ${examQuestions.length} (${score}%)</div><p>Ваша оценка: <strong>${grade}</strong></p><button class="btn-primary" onclick="setMode('exam')" style="margin-top:20px;">Пройти еще раз</button><button class="btn-primary" onclick="setMode('study')" style="margin-top:20px; background-color: #666;">В режим обучения</button></div>`;
     }
 
     // --- РЕЖИМ ФЛЕШ-КАРТ ---
     function renderFlashcard() {
-        const q = allQuestions[Math.floor(Math.random() * allQuestions.length)];
-        stats.flashcardViewed++;
-        saveStats();
-        
-        let html = `
-            <div class="progress">Режим повторения</div>
-            <div class="question-text">${q.question}</div>
-        `;
-
-        if (q.image) {
-            html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`;
-        }
-
+        const q = allQuestions[Math.floor(Math.random() * allQuestions.length)]; stats.flashcardViewed++; saveStats();
+        let html = `<div class="progress">Режим повторения</div><div class="question-text">${q.question}</div>`;
+        if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         let correctAnswersText = q.correct.map(idx => q.options[idx]).join(', ');
-        if (q.customNote) {
-            correctAnswersText += `<br><br><small>${q.customNote}</small>`;
-        }
-
-        html += `
-            <div class="flashcard-reveal ${showFlashcardAnswer ? 'show' : ''}">
-                <strong>Правильный ответ:</strong><br>
-                ${correctAnswersText}
-            </div>
-            <div class="controls">
-                <button class="btn-primary" onclick="toggleFlashcard()">
-                    ${showFlashcardAnswer ? 'Скрыть ответ' : 'Показать ответ'}
-                </button>
-                <button class="btn-primary" style="background-color: #666;" onclick="nextFlashcard()">Следующая карточка →</button>
-            </div>
-        `;
-        
+        if (q.customNote) { correctAnswersText += `<br><br><small>${q.customNote}</small>`; }
+        html += `<div class="flashcard-reveal ${showFlashcardAnswer ? 'show' : ''}"><strong>Правильный ответ:</strong><br>${correctAnswersText}</div><div class="controls"><button class="btn-primary" onclick="toggleFlashcard()">${showFlashcardAnswer ? 'Скрыть ответ' : 'Показать ответ'}</button><button class="btn-primary" style="background-color: #666;" onclick="nextFlashcard()">Следующая карточка →</button></div>`;
         app.innerHTML = html;
     }
-
-    function toggleFlashcard() {
-        showFlashcardAnswer = !showFlashcardAnswer;
-        renderFlashcard();
-    }
-
-    function nextFlashcard() {
-        showFlashcardAnswer = false;
-        renderFlashcard();
-    }
+    function toggleFlashcard() { showFlashcardAnswer = !showFlashcardAnswer; renderFlashcard(); }
+    function nextFlashcard() { showFlashcardAnswer = false; renderFlashcard(); }
 
     // --- РЕЖИМ МАРАФОН ---
-    function startMarathon() {
-        marathonStreak = 0;
-        nextMarathonQuestion();
-    }
-
-    function nextMarathonQuestion() {
-        currentMarathonQ = allQuestions[Math.floor(Math.random() * allQuestions.length)];
-        renderMarathon();
-    }
-
+    function startMarathon() { marathonStreak = 0; nextMarathonQuestion(); }
+    function nextMarathonQuestion() { currentMarathonQ = allQuestions[Math.floor(Math.random() * allQuestions.length)]; renderMarathon(); }
     function renderMarathon() {
         if (!currentMarathonQ) return;
-
-        let html = `
-            <div class="progress">🏆 Марафон на выживание</div>
-            <div class="marathon-stats">
-                <span>Текущая серия: ${marathonStreak}</span>
-                <span>Личный рекорд: ${stats.marathonBest}</span>
-            </div>
-            <div class="question-text">${currentMarathonQ.question}</div>
-        `;
-
-        if (currentMarathonQ.image) {
-            html += `<img src="${currentMarathonQ.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`;
-        }
-
+        let html = `<div class="progress">🏆 Марафон на выживание</div><div class="marathon-stats"><span>Текущая серия: ${marathonStreak}</span><span>Личный рекорд: ${stats.marathonBest}</span></div><div class="question-text">${currentMarathonQ.question}</div>`;
+        if (currentMarathonQ.image) { html += `<img src="${currentMarathonQ.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         html += `<div class="options">`;
-        currentMarathonQ.options.forEach((opt, index) => {
-            html += `<button class="option-btn" onclick="checkMarathonAnswer(${index}, ${JSON.stringify(currentMarathonQ.correct)})">${opt}</button>`;
-        });
-        html += `</div>
-            <div class="controls" id="marathon-controls" style="display:none;">
-                <button class="btn-primary" onclick="startMarathon()">Начать заново</button>
-            </div>
-        `;
-
+        currentMarathonQ.options.forEach((opt, index) => { html += `<button class="option-btn" onclick="checkMarathonAnswer(${index}, ${JSON.stringify(currentMarathonQ.correct)})">${opt}</button>`; });
+        html += `</div><div class="controls" id="marathon-controls" style="display:none;"><button class="btn-primary" onclick="startMarathon()">Начать заново</button></div>`;
         app.innerHTML = html;
     }
-
     function checkMarathonAnswer(selectedIndex, correctIndices) {
-        const buttons = document.querySelectorAll('.option-btn');
-        const isCorrect = correctIndices.includes(selectedIndex);
-
-        buttons.forEach((btn, index) => {
-            btn.disabled = true;
-            if (correctIndices.includes(index)) {
-                btn.classList.add('correct');
-            } else if (index === selectedIndex) {
-                btn.classList.add('wrong');
-            }
-        });
-
-        if (isCorrect) {
-            marathonStreak++;
-            if (marathonStreak > stats.marathonBest) {
-                stats.marathonBest = marathonStreak;
-                saveStats();
-            }
-            setTimeout(() => {
-                nextMarathonQuestion();
-            }, 800);
-        } else {
-            // Игра окончена - отправляем результат в Google
-            sendResultToGoogle('Марафон', marathonStreak, 0, 'Серия правильных ответов');
-            
-            const progressDiv = document.querySelector('.progress');
-            progressDiv.innerHTML = `❌ Игра окончена! Вы ответили правильно ${marathonStreak} раз подряд.`;
-            document.getElementById('marathon-controls').style.display = 'block';
-        }
+        const buttons = document.querySelectorAll('.option-btn'); const isCorrect = correctIndices.includes(selectedIndex);
+        buttons.forEach((btn, index) => { btn.disabled = true; if (correctIndices.includes(index)) { btn.classList.add('correct'); } else if (index === selectedIndex) { btn.classList.add('wrong'); } });
+        if (isCorrect) { marathonStreak++; if (marathonStreak > stats.marathonBest) { stats.marathonBest = marathonStreak; saveStats(); } setTimeout(() => { nextMarathonQuestion(); }, 800); } 
+        else { sendResultToGoogle('Марафон', marathonStreak, 0, 'Серия правильных ответов'); const progressDiv = document.querySelector('.progress'); progressDiv.innerHTML = `❌ Игра окончена! Вы ответили правильно ${marathonStreak} раз подряд.`; document.getElementById('marathon-controls').style.display = 'block'; }
     }
 
     // --- РЕЖИМ СТАТИСТИКИ ---
     function renderStats() {
         initProfile();
-        
         let examInfo = "Нет данных";
-        if (stats.examHistory.length > 0) {
-            const last = stats.examHistory[stats.examHistory.length - 1];
-            const best = Math.max(...stats.examHistory.map(e => e.score));
-            examInfo = `Последний: ${last.score}% (${last.correct}/${last.total})<br>Лучший: ${best}%`;
-        }
-
-        let studyAccuracy = "0%";
-        if (stats.studyAnswered > 0) {
-            studyAccuracy = Math.round((stats.studyCorrect / stats.studyAnswered) * 100) + "%";
-        }
-
-        let html = `
-            <h2 style="text-align:center; color: var(--primary); margin-top:0;">📊 Статистика бойца</h2>
-            <div style="text-align:center; font-size: 20px; font-weight: bold; margin-bottom: 20px;">
-                ${userProfile}
-            </div>
-            
-            <div class="stats-card">
-                <div class="stats-row">
-                    <span>🏆 Рекорд в Марафоне:</span>
-                    <strong>${stats.marathonBest} правильных подряд</strong>
-                </div>
-                <div class="stats-row">
-                    <span>📝 Экзамены:</span>
-                    <strong style="text-align:right;">${examInfo}</strong>
-                </div>
-                <div class="stats-row">
-                    <span>📖 Обучение (всего ответов):</span>
-                    <strong>${stats.studyAnswered}</strong>
-                </div>
-                <div class="stats-row">
-                    <span>🎯 Точность в обучении:</span>
-                    <strong>${studyAccuracy}</strong>
-                </div>
-                <div class="stats-row">
-                    <span>🔄 Просмотрено флеш-карт:</span>
-                    <strong>${stats.flashcardViewed}</strong>
-                </div>
-            </div>
-
-            <button class="btn-primary copy-btn" onclick="copyReport()">📋 Скопировать отчет вручную</button>
-            <button class="btn-primary" style="margin-top:10px; background-color: #e74c3c; width:100%;" onclick="resetStats()">Сбросить мою статистику</button>
-        `;
-        
+        if (stats.examHistory.length > 0) { const last = stats.examHistory[stats.examHistory.length - 1]; const best = Math.max(...stats.examHistory.map(e => e.score)); examInfo = `Последний: ${last.score}% (${last.correct}/${last.total})<br>Лучший: ${best}%`; }
+        let studyAccuracy = "0%"; if (stats.studyAnswered > 0) { studyAccuracy = Math.round((stats.studyCorrect / stats.studyAnswered) * 100) + "%"; }
+        let html = `<h2 style="text-align:center; color: var(--primary); margin-top:0;">📊 Статистика бойца</h2><div style="text-align:center; font-size: 20px; font-weight: bold; margin-bottom: 20px;">${userProfile}</div><div class="stats-card"><div class="stats-row"><span>🏆 Рекорд в Марафоне:</span><strong>${stats.marathonBest} правильных подряд</strong></div><div class="stats-row"><span>📝 Экзамены:</span><strong style="text-align:right;">${examInfo}</strong></div><div class="stats-row"><span>📖 Обучение (всего ответов):</span><strong>${stats.studyAnswered}</strong></div><div class="stats-row"><span>🎯 Точность в обучении:</span><strong>${studyAccuracy}</strong></div><div class="stats-row"><span>🔄 Просмотрено флеш-карт:</span><strong>${stats.flashcardViewed}</strong></div></div><button class="btn-primary copy-btn" onclick="copyReport()">📋 Скопировать отчет вручную</button><button class="btn-primary" style="margin-top:10px; background-color: #e74c3c; width:100%;" onclick="resetStats()">Сбросить мою статистику</button>`;
         app.innerHTML = html;
     }
-
     function copyReport() {
-        const text = `Боец: ${userProfile}. 
-Рекорд Марафона: ${stats.marathonBest}. 
-Экзамены: ${stats.examHistory.length > 0 ? 'Лучший ' + Math.max(...stats.examHistory.map(e => e.score)) + '%' : 'не проходил'}. 
-Обучение: ${stats.studyCorrect}/${stats.studyAnswered} (${stats.studyAnswered > 0 ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) : 0}%).`;
-        
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Отчет скопирован! Вставьте его в чат.");
-        }).catch(err => {
-            alert("Ошибка копирования. Пожалуйста, сделайте скриншот.");
-        });
+        const text = `Боец: ${userProfile}. Рекорд Марафона: ${stats.marathonBest}. Экзамены: ${stats.examHistory.length > 0 ? 'Лучший ' + Math.max(...stats.examHistory.map(e => e.score)) + '%' : 'не проходил'}. Обучение: ${stats.studyCorrect}/${stats.studyAnswered} (${stats.studyAnswered > 0 ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) : 0}%).`;
+        navigator.clipboard.writeText(text).then(() => { alert("Отчет скопирован!"); }).catch(err => { alert("Ошибка копирования."); });
     }
-
     function resetStats() {
-        if (confirm("Вы уверены, что хотите сбросить всю свою статистику? Это действие нельзя отменить.")) {
-            stats = {
-                marathonBest: 0,
-                examHistory: [],
-                studyAnswered: 0,
-                studyCorrect: 0,
-                flashcardViewed: 0
-            };
-            saveStats();
-            renderStats();
-        }
+        if (confirm("Сбросить статистику?")) { stats = { marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 }; saveStats(); renderStats(); }
     }
 
-    // Инициализация при загрузке
+    // Инициализация
     initProfile();
     setMode('study');
-
 </script>
 </body>
 </html>
