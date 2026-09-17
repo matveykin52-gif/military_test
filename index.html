@@ -92,10 +92,21 @@
 
 <script>
     // =========================================================================
-    // ⚠️ НАСТРОЙКА TELEGRAM-БОТА (ВСТАВЬ СВОИ ЗНАЧЕНИЯ)
+    // НАСТРОЙКА GOOGLE FORMS (уже вставлены все ID полей)
     // =========================================================================
-    const TELEGRAM_BOT_TOKEN = '8895219873:AAGxGbYZhTJfg5vCuAde9Hlwwo7yz0vWHv8';
-    const TELEGRAM_CHAT_ID = '8895219873';
+    const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeWoEeKSRUG800rGpbRHIVFMI2RxM1GLo4fA2PgM1LP2fYXWA/formResponse';
+    const ENTRIES = {
+        name: 'entry.1928308704',
+        bestExam: 'entry.1927069693',
+        examCount: 'entry.93751266',
+        marathonBest: 'entry.1851758994',
+        studyCorrect: 'entry.665079976',
+        studyTotal: 'entry.1104585877',
+        studyAccuracy: 'entry.192451358',
+        flashcardViewed: 'entry.459280898',
+        lastMode: 'entry.1880772557',
+        date: 'entry.447404387'
+    };
 
     // ==========================================
     // БАЗА ВОПРОСОВ (все 80 штук)
@@ -207,11 +218,11 @@
     }
 
     // ==========================================
-    // ОТПРАВКА В TELEGRAM
+    // ОТПРАВКА В GOOGLE FORMS
     // ==========================================
     function sendFullProfile(lastModeName) {
-        if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes('ВСТАВЬ')) { 
-            console.log('Telegram не настроен'); 
+        if (!FORM_URL || !ENTRIES.name) { 
+            console.log('Google Forms не настроены'); 
             return; 
         }
         
@@ -224,50 +235,26 @@
             ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) 
             : 0;
         
-        const examCount = stats.examHistory ? stats.examHistory.length : 0;
-        const lastExam = examCount > 0 
-            ? stats.examHistory[stats.examHistory.length - 1].score 
-            : 0;
+        const formData = new URLSearchParams();
+        formData.append(ENTRIES.name, userProfile);
+        formData.append(ENTRIES.bestExam, bestExam);
+        formData.append(ENTRIES.examCount, stats.examHistory ? stats.examHistory.length : 0);
+        formData.append(ENTRIES.marathonBest, stats.marathonBest || 0);
+        formData.append(ENTRIES.studyCorrect, stats.studyCorrect || 0);
+        formData.append(ENTRIES.studyTotal, stats.studyAnswered || 0);
+        formData.append(ENTRIES.studyAccuracy, accuracy);
+        formData.append(ENTRIES.flashcardViewed, stats.flashcardViewed || 0);
+        formData.append(ENTRIES.lastMode, lastModeName || currentMode);
+        formData.append(ENTRIES.date, new Date().toLocaleString('ru-RU'));
         
-        const message = 
-`🎖 <b>Результаты бойца</b>
-
-👤 <b>Имя:</b> ${userProfile}
-📌 <b>Режим:</b> ${lastModeName || currentMode}
-🕐 <b>Время:</b> ${new Date().toLocaleString('ru-RU')}
-
-📝 <b>Экзамены:</b>
-   • Пройдено: ${examCount}
-   • Лучший: ${bestExam}%
-   • Последний: ${lastExam}%
-
-🏆 <b>Марафон:</b> ${stats.marathonBest} правильных подряд
-
-📖 <b>Обучение:</b>
-   • Правильных: ${stats.studyCorrect}
-   • Всего ответов: ${stats.studyAnswered}
-   • Точность: ${accuracy}%
-
-🔄 <b>Флеш-карт просмотрено:</b> ${stats.flashcardViewed}`;
-
-        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        fetch(FORM_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TELEGRAM_CHAT_ID,
-                text: message,
-                parse_mode: 'HTML'
-            })
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData.toString()
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.ok) {
-                console.log('✅ Отправлено в Telegram');
-            } else {
-                console.error('❌ Ошибка Telegram:', data.description);
-            }
-        })
-        .catch(error => console.error('❌ Ошибка сети:', error));
+        .then(() => console.log('✅ Отправлено в Google Forms'))
+        .catch(error => console.error('❌ Ошибка:', error));
     }
 
     // ==========================================
