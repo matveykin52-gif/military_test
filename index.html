@@ -1,3 +1,5 @@
+const TELEGRAM_BOT_TOKEN = '8895219873:AAGxGbYZhTJfg5vCuAde9Hlwwo7yz0vWHv8';
+const TELEGRAM_CHAT_ID = '8895219873';
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -92,9 +94,10 @@
 
 <script>
     // =========================================================================
-    // ССЫЛКА НА GOOGLE ТАБЛИЦУ УЖЕ ВСТАВЛЕНА
+    // ⚠️ НАСТРОЙКА TELEGRAM-БОТА (ВСТАВЬ СВОИ ЗНАЧЕНИЯ)
     // =========================================================================
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUh-V32OmirSkF_cxC9mZNifcpBOZGiEIGEfDI3YlHys1PGeY_QEhtRMFXMPpgXr8r/exec';
+    const TELEGRAM_BOT_TOKEN = 'ВСТАВЬ_СЮДА_ТОКЕН_БОТА';
+    const TELEGRAM_CHAT_ID = 'ВСТАВЬ_СЮДА_CHAT_ID';
 
     // ==========================================
     // БАЗА ВОПРОСОВ (все 80 штук)
@@ -189,7 +192,7 @@
     let stats = JSON.parse(localStorage.getItem('userStats')) || { 
         marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 
     };
-    let answersSinceSync = 0; // Счетчик для контрольных точек обучения
+    let answersSinceSync = 0;
     
     function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); }
     
@@ -206,11 +209,11 @@
     }
 
     // ==========================================
-    // ОТПРАВКА ПОЛНОГО ПРОФИЛЯ В GOOGLE ТАБЛИЦУ
+    // ОТПРАВКА В TELEGRAM
     // ==========================================
     function sendFullProfile(lastModeName) {
-        if (!GOOGLE_SCRIPT_URL) { 
-            console.log('URL не настроен'); 
+        if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes('ВСТАВЬ')) { 
+            console.log('Telegram не настроен'); 
             return; 
         }
         
@@ -223,27 +226,50 @@
             ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) 
             : 0;
         
-        const data = {
-            name: userProfile,
-            bestExam: bestExam,
-            examCount: stats.examHistory ? stats.examHistory.length : 0,
-            marathonBest: stats.marathonBest || 0,
-            studyCorrect: stats.studyCorrect || 0,
-            studyTotal: stats.studyAnswered || 0,
-            studyAccuracy: accuracy,
-            flashcardViewed: stats.flashcardViewed || 0,
-            lastMode: lastModeName || currentMode
-        };
+        const examCount = stats.examHistory ? stats.examHistory.length : 0;
+        const lastExam = examCount > 0 
+            ? stats.examHistory[stats.examHistory.length - 1].score 
+            : 0;
         
-        fetch(GOOGLE_SCRIPT_URL, {
+        const message = 
+`🎖 <b>Результаты бойца</b>
+
+👤 <b>Имя:</b> ${userProfile}
+📌 <b>Режим:</b> ${lastModeName || currentMode}
+🕐 <b>Время:</b> ${new Date().toLocaleString('ru-RU')}
+
+📝 <b>Экзамены:</b>
+   • Пройдено: ${examCount}
+   • Лучший: ${bestExam}%
+   • Последний: ${lastExam}%
+
+🏆 <b>Марафон:</b> ${stats.marathonBest} правильных подряд
+
+📖 <b>Обучение:</b>
+   • Правильных: ${stats.studyCorrect}
+   • Всего ответов: ${stats.studyAnswered}
+   • Точность: ${accuracy}%
+
+🔄 <b>Флеш-карт просмотрено:</b> ${stats.flashcardViewed}`;
+
+        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: message,
+                parse_mode: 'HTML'
+            })
         })
-        .then(() => console.log('✅ Профиль отправлен в Google Sheets'))
-        .catch(error => console.error('❌ Ошибка:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                console.log('✅ Отправлено в Telegram');
+            } else {
+                console.error('❌ Ошибка Telegram:', data.description);
+            }
+        })
+        .catch(error => console.error('❌ Ошибка сети:', error));
     }
 
     // ==========================================
@@ -268,7 +294,6 @@
     // --- РЕЖИМ ОБУЧЕНИЯ ---
     function renderStudy() {
         if (currentIndex >= studyQuestions.length) { 
-            // Обучение завершено - отправляем итог
             sendFullProfile('Обучение (завершено)');
             answersSinceSync = 0;
             
@@ -302,7 +327,6 @@
             else if (index === selectedIndex) { btn.classList.add('wrong'); } 
         });
 
-        // Авто-синхронизация каждые 25 правильных ответов
         if (answersSinceSync >= 25) {
             answersSinceSync = 0;
             sendFullProfile('Обучение (в процессе)');
@@ -363,7 +387,6 @@
         stats.examHistory.push({ date: new Date().toLocaleDateString('ru-RU'), score: score, total: examQuestions.length, correct: correctCount }); 
         saveStats();
         
-        // Авто-отправка после экзамена
         sendFullProfile('Экзамен');
         
         let grade = "2"; if (score >= 80) grade = "5"; else if (score >= 60) grade = "4"; else if (score >= 40) grade = "3";
@@ -415,7 +438,6 @@
             setTimeout(() => { nextMarathonQuestion(); }, 800); 
         } 
         else { 
-            // Авто-отправка после проигрыша в марафоне
             sendFullProfile('Марафон');
             const progressDiv = document.querySelector('.progress'); 
             progressDiv.innerHTML = `❌ Игра окончена! Вы ответили правильно ${marathonStreak} раз подряд.`; 
