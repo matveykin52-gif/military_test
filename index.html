@@ -97,7 +97,7 @@
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUh-V32OmirSkF_cxC9mZNifcpBOZGiEIGEfDI3YlHys1PGeY_QEhtRMFXMPpgXr8r/exec';
 
     // ==========================================
-    // БАЗА ВОПРОСОВ (все 80 штук с исправлениями)
+    // БАЗА ВОПРОСОВ (все 80 штук)
     // ==========================================
     const allQuestions = [
         { id: 1, question: "Какое воинское звание приведено на фото?", options: ["Полковник", "Старший лейтенант", "Подполковник", "Генерал-полковник"], correct: [0], image: "img/q1.jpg" },
@@ -189,6 +189,7 @@
     let stats = JSON.parse(localStorage.getItem('userStats')) || { 
         marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 
     };
+    let answersSinceSync = 0; // Счетчик для контрольных точек обучения
     
     function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); }
     
@@ -205,31 +206,44 @@
     }
 
     // ==========================================
-    // ОТПРАВКА В GOOGLE ТАБЛИЦУ
+    // ОТПРАВКА ПОЛНОГО ПРОФИЛЯ В GOOGLE ТАБЛИЦУ
     // ==========================================
-    function sendResultToGoogle(mode, score, total, details = '') {
+    function sendFullProfile(lastModeName) {
         if (!GOOGLE_SCRIPT_URL) { 
-            console.log('URL не настроен. Результат не отправлен.'); 
+            console.log('URL не настроен'); 
             return; 
         }
-        const data = { 
-            name: userProfile, 
-            mode: mode, 
-            score: score, 
-            total: total, 
-            percent: total > 0 ? Math.round((score / total) * 100) : 0, 
-            details: details 
+        
+        let bestExam = 0;
+        if (stats.examHistory && stats.examHistory.length > 0) {
+            bestExam = Math.max(...stats.examHistory.map(e => e.score));
+        }
+        
+        const accuracy = stats.studyAnswered > 0 
+            ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) 
+            : 0;
+        
+        const data = {
+            name: userProfile,
+            bestExam: bestExam,
+            examCount: stats.examHistory ? stats.examHistory.length : 0,
+            marathonBest: stats.marathonBest || 0,
+            studyCorrect: stats.studyCorrect || 0,
+            studyTotal: stats.studyAnswered || 0,
+            studyAccuracy: accuracy,
+            flashcardViewed: stats.flashcardViewed || 0,
+            lastMode: lastModeName || currentMode
         };
         
-        fetch(GOOGLE_SCRIPT_URL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            cache: 'no-cache', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify(data) 
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         })
-        .then(() => console.log('Результат отправлен в Google Sheets'))
-        .catch(error => console.error('Ошибка отправки:', error));
+        .then(() => console.log('✅ Профиль отправлен в Google Sheets'))
+        .catch(error => console.error('❌ Ошибка:', error));
     }
 
     // ==========================================
@@ -254,7 +268,11 @@
     // --- РЕЖИМ ОБУЧЕНИЯ ---
     function renderStudy() {
         if (currentIndex >= studyQuestions.length) { 
-            app.innerHTML = `<div class="result-screen"><h2>Обучение завершено!</h2><p>Вы прошли все доступные вопросы.</p><button class="btn-primary" onclick="setMode('study')">Начать заново</button></div>`; 
+            // Обучение завершено - отправляем итог
+            sendFullProfile('Обучение (завершено)');
+            answersSinceSync = 0;
+            
+            app.innerHTML = `<div class="result-screen"><h2>Обучение завершено!</h2><p>Вы прошли все доступные вопросы.</p><p style="color: var(--correct); font-weight: bold;">✅ Результаты отправлены командиру</p><button class="btn-primary" onclick="setMode('study')">Начать заново</button></div>`; 
             return; 
         }
         const q = studyQuestions[currentIndex];
@@ -272,7 +290,10 @@
         const buttons = document.querySelectorAll('.option-btn'); 
         const isCorrect = correctIndices.includes(selectedIndex);
         stats.studyAnswered++; 
-        if (isCorrect) stats.studyCorrect++; 
+        if (isCorrect) {
+            stats.studyCorrect++; 
+            answersSinceSync++;
+        }
         saveStats();
         
         buttons.forEach((btn, index) => { 
@@ -280,6 +301,12 @@
             if (correctIndices.includes(index)) { btn.classList.add('correct'); } 
             else if (index === selectedIndex) { btn.classList.add('wrong'); } 
         });
+
+        // Авто-синхронизация каждые 25 правильных ответов
+        if (answersSinceSync >= 25) {
+            answersSinceSync = 0;
+            sendFullProfile('Обучение (в процессе)');
+        }
         
         if (isCorrect) { 
             setTimeout(() => { nextStudyQuestion(); }, 800); 
@@ -335,10 +362,12 @@
         const score = Math.round((correctCount / examQuestions.length) * 100);
         stats.examHistory.push({ date: new Date().toLocaleDateString('ru-RU'), score: score, total: examQuestions.length, correct: correctCount }); 
         saveStats();
-        sendResultToGoogle('Экзамен', correctCount, examQuestions.length, `Оценка: ${score >= 80 ? '5' : score >= 60 ? '4' : score >= 40 ? '3' : '2'}`);
+        
+        // Авто-отправка после экзамена
+        sendFullProfile('Экзамен');
         
         let grade = "2"; if (score >= 80) grade = "5"; else if (score >= 60) grade = "4"; else if (score >= 40) grade = "3";
-        app.innerHTML = `<div class="result-screen"><h2>Экзамен завершен!</h2><div class="result-score" style="color: ${score >= 60 ? 'var(--correct)' : 'var(--wrong)'}">${correctCount} / ${examQuestions.length} (${score}%)</div><p>Ваша оценка: <strong>${grade}</strong></p><button class="btn-primary" onclick="setMode('exam')" style="margin-top:20px;">Пройти еще раз</button><button class="btn-primary" onclick="setMode('study')" style="margin-top:20px; background-color: #666;">В режим обучения</button></div>`;
+        app.innerHTML = `<div class="result-screen"><h2>Экзамен завершен!</h2><div class="result-score" style="color: ${score >= 60 ? 'var(--correct)' : 'var(--wrong)'}">${correctCount} / ${examQuestions.length} (${score}%)</div><p>Ваша оценка: <strong>${grade}</strong></p><p style="color: var(--correct); font-weight: bold;">✅ Результаты отправлены командиру</p><button class="btn-primary" onclick="setMode('exam')" style="margin-top:20px;">Пройти еще раз</button><button class="btn-primary" onclick="setMode('study')" style="margin-top:20px; background-color: #666;">В режим обучения</button></div>`;
     }
 
     // --- РЕЖИМ ФЛЕШ-КАРТ ---
@@ -386,7 +415,8 @@
             setTimeout(() => { nextMarathonQuestion(); }, 800); 
         } 
         else { 
-            sendResultToGoogle('Марафон', marathonStreak, 0, 'Серия правильных ответов'); 
+            // Авто-отправка после проигрыша в марафоне
+            sendFullProfile('Марафон');
             const progressDiv = document.querySelector('.progress'); 
             progressDiv.innerHTML = `❌ Игра окончена! Вы ответили правильно ${marathonStreak} раз подряд.`; 
             document.getElementById('marathon-controls').style.display = 'block'; 
@@ -394,7 +424,7 @@
     }
 
     // --- РЕЖИМ СТАТИСТИКИ ---
-        function renderStats() {
+    function renderStats() {
         initProfile();
         let examInfo = "Нет данных";
         if (stats.examHistory.length > 0) { 
@@ -405,68 +435,23 @@
         let studyAccuracy = "0%"; 
         if (stats.studyAnswered > 0) { studyAccuracy = Math.round((stats.studyCorrect / stats.studyAnswered) * 100) + "%"; }
         
-        let html = `
-            <h2 style="text-align:center; color: var(--primary); margin-top:0;">📊 Статистика бойца</h2>
-            <div style="text-align:center; font-size: 20px; font-weight: bold; margin-bottom: 20px;">${userProfile}</div>
-            
-            <div class="stats-card">
-                <div class="stats-row"><span>🏆 Рекорд в Марафоне:</span><strong>${stats.marathonBest} правильных подряд</strong></div>
-                <div class="stats-row"><span>📝 Экзамены:</span><strong style="text-align:right;">${examInfo}</strong></div>
-                <div class="stats-row"><span>📖 Обучение (всего ответов):</span><strong>${stats.studyAnswered}</strong></div>
-                <div class="stats-row"><span>🎯 Точность в обучении:</span><strong>${studyAccuracy}</strong></div>
-                <div class="stats-row"><span>🔄 Просмотрено флеш-карт:</span><strong>${stats.flashcardViewed}</strong></div>
-            </div>
-
-            <button class="btn-primary copy-btn" onclick="sendFullReport()" style="background-color: #27ae60; font-size: 17px; padding: 15px;">📤 Отправить результаты командиру</button>
-            <button class="btn-primary copy-btn" onclick="copyReport()">📋 Скопировать отчет вручную</button>
-            <button class="btn-primary" style="margin-top:10px; background-color: #e74c3c; width:100%;" onclick="resetStats()">Сбросить мою статистику</button>
-        `;
+        let html = `<h2 style="text-align:center; color: var(--primary); margin-top:0;">📊 Статистика бойца</h2><div style="text-align:center; font-size: 20px; font-weight: bold; margin-bottom: 20px;">${userProfile}</div><div class="stats-card"><div class="stats-row"><span>🏆 Рекорд в Марафоне:</span><strong>${stats.marathonBest} правильных подряд</strong></div><div class="stats-row"><span>📝 Экзамены:</span><strong style="text-align:right;">${examInfo}</strong></div><div class="stats-row"><span>📖 Обучение (всего ответов):</span><strong>${stats.studyAnswered}</strong></div><div class="stats-row"><span>🎯 Точность в обучении:</span><strong>${studyAccuracy}</strong></div><div class="stats-row"><span>🔄 Просмотрено флеш-карт:</span><strong>${stats.flashcardViewed}</strong></div></div>
+        <button class="btn-primary copy-btn" onclick="sendFullProfile('Профиль (вручную)')" style="background-color: #27ae60; font-size: 16px;">📤 Отправить результаты командиру</button>
+        <button class="btn-primary copy-btn" onclick="copyReport()">📋 Скопировать отчет вручную</button><button class="btn-primary" style="margin-top:10px; background-color: #e74c3c; width:100%;" onclick="resetStats()">Сбросить мою статистику</button>`;
         app.innerHTML = html;
     }
-
-        function sendFullReport() {
-        if (!GOOGLE_SCRIPT_URL) { 
-            alert("Ссылка на Google Таблицу не настроена."); 
-            return; 
+    
+    function copyReport() {
+        const text = `Боец: ${userProfile}. Рекорд Марафона: ${stats.marathonBest}. Экзамены: ${stats.examHistory.length > 0 ? 'Лучший ' + Math.max(...stats.examHistory.map(e => e.score)) + '%' : 'не проходил'}. Обучение: ${stats.studyCorrect}/${stats.studyAnswered} (${stats.studyAnswered > 0 ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) : 0}%).`;
+        navigator.clipboard.writeText(text).then(() => { alert("Отчет скопирован!"); }).catch(err => { alert("Ошибка копирования."); });
+    }
+    
+    function resetStats() {
+        if (confirm("Сбросить статистику?")) { 
+            stats = { marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 }; 
+            saveStats(); 
+            renderStats(); 
         }
-
-        // Готовим подробный отчет
-        let examDetails = "не проходил";
-        if (stats.examHistory.length > 0) {
-            const best = Math.max(...stats.examHistory.map(e => e.score));
-            const last = stats.examHistory[stats.examHistory.length - 1];
-            examDetails = `Экзаменов: ${stats.examHistory.length}, лучший: ${best}%, последний: ${last.score}%`;
-        }
-
-        const studyAccuracy = stats.studyAnswered > 0 
-            ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) + "%" 
-            : "0%";
-
-        const details = `Рекорд марафона: ${stats.marathonBest}. ${examDetails}. Обучение: ${stats.studyCorrect}/${stats.studyAnswered} (${studyAccuracy}). Флеш-карт: ${stats.flashcardViewed}.`;
-
-        const data = {
-            name: userProfile,
-            mode: "Профиль (итог)",
-            score: stats.studyCorrect,
-            total: stats.studyAnswered,
-            percent: stats.studyAnswered > 0 ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) : 0,
-            details: details
-        };
-
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => {
-            alert("✅ Результаты отправлены командиру! Проверь Google Таблицу через 5 секунд.");
-        })
-        .catch(error => {
-            alert("❌ Ошибка отправки. Проверь интернет и попробуй еще раз.");
-            console.error(error);
-        });
     }
 
     // Инициализация при загрузке
