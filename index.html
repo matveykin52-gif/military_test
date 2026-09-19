@@ -39,13 +39,19 @@
         .option-btn { 
             background-color: #f4f4f4; border: 2px solid var(--border); padding: 15px; 
             text-align: left; border-radius: 5px; cursor: pointer; font-size: 16px; 
-            transition: all 0.2s; font-family: inherit; display: flex; justify-content: space-between;
+            transition: all 0.2s; font-family: inherit; display: flex; justify-content: space-between; align-items: center;
         }
         .option-btn:hover:not(:disabled) { background-color: #e0e0e0; border-color: #999; }
         .option-btn.correct { background-color: #d4edda; border-color: var(--correct); color: #155724; font-weight: bold; }
         .option-btn.wrong { background-color: #f8d7da; border-color: var(--wrong); color: #721c24; }
         .option-btn.selected { background-color: #fff3cd; border-color: var(--selected); font-weight: bold; }
         .option-btn:disabled { cursor: not-allowed; }
+        .option-number {
+            background-color: var(--selected); color: white; font-weight: bold;
+            border-radius: 50%; width: 28px; height: 28px; 
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-left: 10px; font-size: 14px;
+        }
         
         .controls { margin-top: 25px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
         .btn-primary { 
@@ -64,6 +70,7 @@
         .flashcard-reveal { margin-top: 20px; padding: 15px; background-color: #e8f4f8; border-left: 5px solid #3498db; border-radius: 5px; display: none; font-size: 16px; }
         .flashcard-reveal.show { display: block; }
         .custom-note { margin-top: 15px; font-size: 14px; color: #666; font-style: italic; background: #f9f9f9; padding: 10px; border-radius: 5px; }
+        .hint { font-size: 14px; color: #666; margin-bottom: 10px; padding: 8px; background: #f0f0f0; border-radius: 5px; }
         
         .stats-card { background: #f8f9fa; border-radius: 8px; padding: 20px; margin-top: 15px; }
         .stats-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 16px; }
@@ -96,7 +103,7 @@
 
 <script>
     // =========================================================================
-    // НАСТРОЙКА GOOGLE FORMS (уже вставлены все ID полей)
+    // НАСТРОЙКА GOOGLE FORMS
     // =========================================================================
     const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSeWoEeKSRUG800rGpbRHIVFMI2RxM1GLo4fA2PgM1LP2fYXWA/formResponse';
     const ENTRIES = {
@@ -113,7 +120,7 @@
     };
 
     // ==========================================
-    // БАЗА ВОПРОСОВ (все 80 штук)
+    // БАЗА ВОПРОСОВ
     // ==========================================
     const allQuestions = [
         { id: 1, question: "Какое воинское звание приведено на фото?", options: ["Полковник", "Старший лейтенант", "Подполковник", "Генерал-полковник"], correct: [0], image: "img/q1.jpg" },
@@ -199,12 +206,27 @@
     ];
 
     // ==========================================
-    // БАЗЫ ДЛЯ НОВЫХ РЕЖИМОВ (пока пустые, заполни сам)
+    // БАЗЫ ДЛЯ НОВЫХ РЕЖИМОВ (ЗНАКИ, КОСТРЫ, УЗЛЫ)
     // ==========================================
     const signsQuestions = [
-        { id: 101, question: "Что означает этот знак?", options: ["Нужен врач", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 0, image: "img/sign_1.jpg" },
-        { id: 102, question: "Что означает этот знак?", options: ["Нужен врач", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 1, image: "img/sign_2.jpg" },
-        // Добавь остальные знаки сюда по аналогии
+        { id: 101, question: "Что означает этот знак?", options: ["Нужен врач, есть тяжелораненные", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 0, image: "img/sign_1.jpg" },
+        { id: 102, question: "Что означает этот знак?", options: ["Нужен врач, есть тяжелораненные", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 1, image: "img/sign_2.jpg" },
+        { id: 103, question: "Что означает этот знак?", options: ["Нужен врач, есть тяжелораненные", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 2, image: "img/sign_3.jpg" },
+        { id: 104, question: "Что означает этот знак?", options: ["Нужен врач, есть тяжелораненные", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 3, image: "img/sign_4.jpg" },
+        { id: 105, question: "Что означает этот знак?", options: ["Нужны оружие и боеприпасы", "Нужны компас и карта", "Нужны сигнальная лампа с батареей и радио", "Укажите направление следования"], correct: 0, image: "img/sign_5.jpg" },
+        { id: 106, question: "Что означает этот знак?", options: ["Нужны оружие и боеприпасы", "Нужны компас и карта", "Нужны сигнальная лампа с батареей и радио", "Укажите направление следования"], correct: 1, image: "img/sign_6.jpg" },
+        { id: 107, question: "Что означает этот знак?", options: ["Нужны оружие и боеприпасы", "Нужны компас и карта", "Нужны сигнальная лампа с батареей и радио", "Укажите направление следования"], correct: 2, image: "img/sign_7.jpg" },
+        { id: 108, question: "Что означает этот знак?", options: ["Нужны оружие и боеприпасы", "Нужны компас и карта", "Нужны сигнальная лампа с батареей и радио", "Укажите направление следования"], correct: 3, image: "img/sign_8.jpg" },
+        { id: 109, question: "Что означает этот знак?", options: ["Следую в этом направлении", "Попытаюсь взлететь", "Самолет сильно поврежден", "Здесь возможна посадка"], correct: 0, image: "img/sign_9.jpg" },
+        { id: 110, question: "Что означает этот знак?", options: ["Следую в этом направлении", "Попытаюсь взлететь", "Самолет сильно поврежден", "Здесь возможна посадка"], correct: 1, image: "img/sign_10.jpg" },
+        { id: 111, question: "Что означает этот знак?", options: ["Следую в этом направлении", "Попытаюсь взлететь", "Самолет сильно поврежден", "Здесь возможна посадка"], correct: 2, image: "img/sign_11.jpg" },
+        { id: 112, question: "Что означает этот знак?", options: ["Следую в этом направлении", "Попытаюсь взлететь", "Самолет сильно поврежден", "Здесь возможна посадка"], correct: 3, image: "img/sign_12.jpg" },
+        { id: 113, question: "Что означает этот знак?", options: ["Нужны бензин и масло", "Всё в порядке", "Нет", "Да"], correct: 0, image: "img/sign_13.jpg" },
+        { id: 114, question: "Что означает этот знак?", options: ["Нужны бензин и масло", "Всё в порядке", "Нет", "Да"], correct: 1, image: "img/sign_14.jpg" },
+        { id: 115, question: "Что означает этот знак?", options: ["Нужны бензин и масло", "Всё в порядке", "Нет", "Да"], correct: 2, image: "img/sign_15.jpg" },
+        { id: 116, question: "Что означает этот знак?", options: ["Нужны бензин и масло", "Всё в порядке", "Нет", "Да"], correct: 3, image: "img/sign_16.jpg" },
+        { id: 117, question: "Что означает этот знак?", options: ["Не понял", "Нужен механик", "Нужен врач", "Нужны медикаменты"], correct: 0, image: "img/sign_17.jpg" },
+        { id: 118, question: "Что означает этот знак?", options: ["Не понял", "Нужен механик", "Нужен врач", "Нужны медикаменты"], correct: 1, image: "img/sign_18.jpg" }
     ];
 
     const firesQuestions = [
@@ -231,19 +253,19 @@
     ];
 
     // ==========================================
-    // СИСТЕМА СТАТИСТИКИ И ПРОФИЛЯ
+    // СИСТЕМА СТАТИСТИКИ
     // ==========================================
     let userProfile = localStorage.getItem('userProfile');
     let stats = JSON.parse(localStorage.getItem('userStats')) || { 
         marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 
     };
     let answersSinceSync = 0;
-    let orderState = []; // Для вопросов с порядком
+    let orderState = [];
+    let multiState = [];
     
     function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); }
     
     function initProfile() {
-        // Бесконечный цикл, пока не введет имя
         while (!userProfile || userProfile.trim() === "") {
             userProfile = prompt("Введите ваше имя или фамилию (без этого вход невозможен):");
             if (userProfile && userProfile.trim() !== "") { 
@@ -259,7 +281,7 @@
     // ОТПРАВКА В GOOGLE FORMS
     // ==========================================
     function sendFullProfile(lastModeName) {
-        if (!FORM_URL || !ENTRIES.name) { return; }
+        if (!FORM_URL || !ENTRIES.name) return;
         
         let bestExam = 0;
         if (stats.examHistory && stats.examHistory.length > 0) {
@@ -288,26 +310,33 @@
     // ЛОГИКА САЙТА
     // ==========================================
     let currentMode = 'study', currentIndex = 0, studyQuestions = [], examQuestions = [], userAnswers = {}, showFlashcardAnswer = false, marathonStreak = 0, currentMarathonQ = null;
+    
+    // Переменные для новых режимов
+    let imageQuizQuestions = [];
+    let imageQuizIndex = 0;
+    let currentImageModeName = '';
+    let currentImageModeKey = '';
+    
     const app = document.getElementById('app');
     const btnStudy = document.getElementById('btn-study'), btnExam = document.getElementById('btn-exam'), btnFlash = document.getElementById('btn-flash'), btnMarathon = document.getElementById('btn-marathon'), btnStats = document.getElementById('btn-stats'), btnSigns = document.getElementById('btn-signs'), btnFires = document.getElementById('btn-fires'), btnKnots = document.getElementById('btn-knots');
 
     function setMode(mode) {
-        currentMode = mode; currentIndex = 0; userAnswers = {}; showFlashcardAnswer = false; orderState = [];
+        currentMode = mode; currentIndex = 0; userAnswers = {}; showFlashcardAnswer = false; orderState = []; multiState = [];
         [btnStudy, btnExam, btnFlash, btnMarathon, btnStats, btnSigns, btnFires, btnKnots].forEach(btn => btn.classList.remove('active'));
         
         if (mode === 'study') { btnStudy.classList.add('active'); studyQuestions = shuffle([...allQuestions]); renderStudy(); } 
         else if (mode === 'exam') { btnExam.classList.add('active'); startExam(); } 
         else if (mode === 'flash') { btnFlash.classList.add('active'); renderFlashcard(); } 
         else if (mode === 'marathon') { btnMarathon.classList.add('active'); startMarathon(); } 
-        else if (mode === 'signs') { btnSigns.classList.add('active'); renderImageQuiz(signsQuestions, 'Знаки бедствия'); }
-        else if (mode === 'fires') { btnFires.classList.add('active'); renderImageQuiz(firesQuestions, 'Костры'); }
-        else if (mode === 'knots') { btnKnots.classList.add('active'); renderImageQuiz(knotsQuestions, 'Узлы'); }
+        else if (mode === 'signs') { btnSigns.classList.add('active'); startImageQuiz('Знаки бедствия', signsQuestions); }
+        else if (mode === 'fires') { btnFires.classList.add('active'); startImageQuiz('Костры', firesQuestions); }
+        else if (mode === 'knots') { btnKnots.classList.add('active'); startImageQuiz('Узлы', knotsQuestions); }
         else if (mode === 'stats') { btnStats.classList.add('active'); renderStats(); }
     }
     
     function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
-    // --- РЕЖИМ ОБУЧЕНИЯ (с поддержкой order и multi) ---
+    // --- РЕЖИМ ОБУЧЕНИЯ ---
     function renderStudy() {
         if (currentIndex >= studyQuestions.length) { 
             sendFullProfile('Обучение (завершено)');
@@ -319,21 +348,22 @@
         let html = `<div class="progress">Вопрос ${currentIndex + 1} из ${studyQuestions.length}</div><div class="question-text">${q.question}</div>`;
         if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         
-        html += `<div class="options" id="options-container">`;
-        
         if (q.type === 'order') {
-            html += `<p style="font-size:14px; color:#666; margin-bottom:5px;">Нажимайте на варианты в правильном порядке. Цифры покажут ваш выбор.</p>`;
+            html += `<div class="hint">Нажимайте на варианты в правильном порядке. Цифры покажут ваш выбор.</div>`;
+            html += `<div class="options" id="options-container">`;
             q.options.forEach((opt, index) => { 
-                html += `<button class="option-btn" id="opt-${index}" onclick="selectOrderAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`; 
+                html += `<button class="option-btn" id="opt-${index}" onclick="selectOrderAnswer(${index})">${opt}<span class="option-number" style="display:none;"></span></button>`; 
             });
-            html += `</div><div class="controls"><button class="btn-primary" id="check-order-btn" style="display:none;" onclick="checkOrderAnswer(${JSON.stringify(q.correct)})">Проверить</button></div>`;
+            html += `</div><div class="controls"><button class="btn-primary" id="check-order-btn" style="display:none;" onclick="checkOrderAnswer()">Проверить</button></div>`;
         } else if (q.type === 'multi') {
-            html += `<p style="font-size:14px; color:#666; margin-bottom:5px;">Выберите все правильные варианты, затем нажмите «Проверить».</p>`;
+            html += `<div class="hint">Выберите все правильные варианты, затем нажмите «Проверить».</div>`;
+            html += `<div class="options" id="options-container">`;
             q.options.forEach((opt, index) => { 
                 html += `<button class="option-btn" id="opt-${index}" onclick="toggleMultiAnswer(${index})">${opt}</button>`; 
             });
-            html += `</div><div class="controls"><button class="btn-primary" id="check-multi-btn" onclick="checkMultiAnswer(${JSON.stringify(q.correct)})">Проверить</button></div>`;
+            html += `</div><div class="controls"><button class="btn-primary" id="check-multi-btn" onclick="checkMultiAnswer()">Проверить</button></div>`;
         } else {
+            html += `<div class="options">`;
             q.options.forEach((opt, index) => { 
                 html += `<button class="option-btn" onclick="checkStudyAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`; 
             });
@@ -344,74 +374,104 @@
         app.innerHTML = html;
     }
     
-    // Логика для order вопросов
-    function selectOrderAnswer(index, correct) {
+    // Логика для order
+    function selectOrderAnswer(index) {
+        const btn = document.getElementById(`opt-${index}`);
+        const numberSpan = btn.querySelector('.option-number');
+        
         if (orderState.includes(index)) {
             orderState = orderState.filter(i => i !== index);
-            document.getElementById(`opt-${index}`).innerText = document.getElementById(`opt-${index}`).innerText.replace(/^\d+\.\s/, '');
+            numberSpan.style.display = 'none';
+            numberSpan.innerText = '';
         } else {
             if (orderState.length >= 4) return;
             orderState.push(index);
-            document.getElementById(`opt-${index}`).innerText = `${orderState.length}. ` + document.getElementById(`opt-${index}`).innerText;
+            numberSpan.innerText = orderState.length;
+            numberSpan.style.display = 'inline-flex';
         }
+        
+        // Пересчет номеров
+        orderState.forEach((idx, i) => {
+            const b = document.getElementById(`opt-${idx}`);
+            b.querySelector('.option-number').innerText = i + 1;
+        });
+        
         document.getElementById('check-order-btn').style.display = orderState.length === 4 ? 'block' : 'none';
     }
 
-    function checkOrderAnswer(correctOrder) {
+    function checkOrderAnswer() {
+        const q = studyQuestions[currentIndex];
         document.getElementById('check-order-btn').style.display = 'none';
-        const isCorrect = JSON.stringify(orderState) === JSON.stringify(correctOrder);
         
-        document.querySelectorAll('.option-btn').forEach((btn, index) => {
-            btn.disabled = true;
-            if (correctOrder.includes(index)) btn.classList.add('correct');
-            if (!isCorrect && orderState.includes(index) && !correctOrder.includes(index)) btn.classList.add('wrong');
+        const isCorrect = JSON.stringify(orderState) === JSON.stringify(q.correct);
+        
+        document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+        
+        // Показать правильный порядок
+        q.options.forEach((opt, index) => {
+            const btn = document.getElementById(`opt-${index}`);
+            const numSpan = btn.querySelector('.option-number');
+            const correctPos = q.correct.indexOf(index);
+            if (correctPos !== -1) {
+                btn.classList.add('correct');
+                numSpan.innerText = correctPos + 1;
+                numSpan.style.display = 'inline-flex';
+                numSpan.style.backgroundColor = 'var(--correct)';
+            } else if (orderState.includes(index)) {
+                btn.classList.add('wrong');
+            }
         });
 
         if (isCorrect) {
             stats.studyAnswered++; stats.studyCorrect++; answersSinceSync++; saveStats();
-            setTimeout(() => { nextStudyQuestion(); }, 1000);
+            setTimeout(() => { nextStudyQuestion(); }, 1500);
         } else {
             stats.studyAnswered++; saveStats();
+            const controls = document.querySelector('.controls');
             const btn = document.createElement('button');
             btn.className = 'btn-primary';
             btn.innerText = 'Продолжить';
             btn.onclick = () => nextStudyQuestion();
-            document.querySelector('.controls').appendChild(btn);
+            controls.appendChild(btn);
         }
     }
 
-    // Логика для multi вопросов
-    let multiState = [];
+    // Логика для multi
     function toggleMultiAnswer(index) {
+        const btn = document.getElementById(`opt-${index}`);
         if (multiState.includes(index)) {
             multiState = multiState.filter(i => i !== index);
-            document.getElementById(`opt-${index}`).classList.remove('selected');
+            btn.classList.remove('selected');
         } else {
             multiState.push(index);
-            document.getElementById(`opt-${index}`).classList.add('selected');
+            btn.classList.add('selected');
         }
     }
 
-    function checkMultiAnswer(correctIndices) {
+    function checkMultiAnswer() {
+        const q = studyQuestions[currentIndex];
         document.getElementById('check-multi-btn').style.display = 'none';
-        const isCorrect = correctIndices.every(val => multiState.includes(val)) && multiState.length === correctIndices.length;
+        
+        const correctArray = q.correct;
+        const isCorrect = correctArray.every(val => multiState.includes(val)) && multiState.length === correctArray.length;
         
         document.querySelectorAll('.option-btn').forEach((btn, index) => {
             btn.disabled = true;
-            if (correctIndices.includes(index)) btn.classList.add('correct');
-            if (!isCorrect && multiState.includes(index) && !correctIndices.includes(index)) btn.classList.add('wrong');
+            if (correctArray.includes(index)) btn.classList.add('correct');
+            if (!isCorrect && multiState.includes(index) && !correctArray.includes(index)) btn.classList.add('wrong');
         });
 
         if (isCorrect) {
             stats.studyAnswered++; stats.studyCorrect++; answersSinceSync++; saveStats();
-            setTimeout(() => { nextStudyQuestion(); }, 1000);
+            setTimeout(() => { nextStudyQuestion(); }, 1200);
         } else {
             stats.studyAnswered++; saveStats();
+            const controls = document.querySelector('.controls');
             const btn = document.createElement('button');
             btn.className = 'btn-primary';
             btn.innerText = 'Продолжить';
             btn.onclick = () => nextStudyQuestion();
-            document.querySelector('.controls').appendChild(btn);
+            controls.appendChild(btn);
         }
     }
     
@@ -444,24 +504,45 @@
     }
 
     // --- НОВЫЕ РЕЖИМЫ (Знаки, Костры, Узлы) ---
-    function renderImageQuiz(questions, modeName) {
-        if (questions.length === 0) {
+    function startImageQuiz(modeName, questionsArray) {
+        currentImageModeName = modeName;
+        if (modeName === 'Знаки бедствия') currentImageModeKey = 'signs';
+        else if (modeName === 'Костры') currentImageModeKey = 'fires';
+        else currentImageModeKey = 'knots';
+        
+        imageQuizQuestions = shuffle([...questionsArray]);
+        imageQuizIndex = 0;
+        renderImageQuiz();
+    }
+
+    function renderImageQuiz() {
+        if (imageQuizQuestions.length === 0) {
             app.innerHTML = `<div class="result-screen"><h2>Режим в разработке</h2><p>Скоро здесь появятся вопросы!</p><button class="btn-primary" onclick="setMode('study')">Вернуться</button></div>`;
             return;
         }
         
-        const q = questions[Math.floor(Math.random() * questions.length)];
-        let html = `<div class="progress">Режим: ${modeName}</div><div class="question-text">${q.question}</div>`;
+        if (imageQuizIndex >= imageQuizQuestions.length) {
+            app.innerHTML = `<div class="result-screen">
+                <h2>✅ Режим "${currentImageModeName}" пройден!</h2>
+                <p>Вы ответили на все ${imageQuizQuestions.length} вопросов.</p>
+                <button class="btn-primary" onclick="setMode('${currentImageModeKey}')" style="margin-top:20px;">Пройти заново</button>
+                <button class="btn-primary" onclick="setMode('study')" style="margin-top:10px; background-color: #666;">В главное меню</button>
+            </div>`;
+            return;
+        }
+        
+        const q = imageQuizQuestions[imageQuizIndex];
+        let html = `<div class="progress">Режим: ${currentImageModeName} — Вопрос ${imageQuizIndex + 1} из ${imageQuizQuestions.length}</div><div class="question-text">${q.question}</div>`;
         if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         html += `<div class="options">`;
         q.options.forEach((opt, index) => { 
-            html += `<button class="option-btn" onclick="checkImageQuizAnswer(${index}, ${q.correct}, '${modeName}')">${opt}</button>`; 
+            html += `<button class="option-btn" onclick="checkImageQuizAnswer(${index}, ${q.correct})">${opt}</button>`; 
         });
-        html += `</div><div class="controls"><button class="btn-primary" id="next-image-btn" style="display:none;" onclick="renderImageQuiz(${JSON.stringify(questions).replace(/"/g, '&quot;')}, '${modeName}')">Следующий вопрос →</button></div>`;
+        html += `</div><div class="controls"><button class="btn-primary" id="next-image-btn" style="display:none;" onclick="nextImageQuestion()">Следующий вопрос →</button></div>`;
         app.innerHTML = html;
     }
 
-    function checkImageQuizAnswer(selectedIndex, correctIndex, modeName) {
+    function checkImageQuizAnswer(selectedIndex, correctIndex) {
         const buttons = document.querySelectorAll('.option-btn');
         const isCorrect = selectedIndex === correctIndex;
         
@@ -473,13 +554,17 @@
 
         if (isCorrect) {
             setTimeout(() => {
-                // Для простоты берем следующую случайную картинку из массива (передаем его через замыкание не получится, используем глобальный поиск)
-                let questionsArray = modeName === 'Знаки бедствия' ? signsQuestions : (modeName === 'Костры' ? firesQuestions : knotsQuestions);
-                renderImageQuiz(questionsArray, modeName);
+                imageQuizIndex++;
+                renderImageQuiz();
             }, 800);
         } else {
             document.getElementById('next-image-btn').style.display = 'block';
         }
+    }
+
+    function nextImageQuestion() {
+        imageQuizIndex++;
+        renderImageQuiz();
     }
 
     // --- РЕЖИМ ЭКЗАМЕНА ---
@@ -582,7 +667,7 @@
         if (confirm("Сбросить статистику?")) { stats = { marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 }; saveStats(); renderStats(); }
     }
 
-    // Инициализация при загрузке
+    // Инициализация
     initProfile();
     setMode('study');
 </script>
