@@ -8,7 +8,7 @@
         :root { 
             --bg-color: #2c3e50; --card-bg: #ffffff; --text-main: #333333; 
             --primary: #4a6741; --primary-hover: #3b5334; --correct: #27ae60; 
-            --wrong: #e74c3c; --border: #ccc; 
+            --wrong: #e74c3c; --border: #ccc; --selected: #f39c12;
         }
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
@@ -39,11 +39,12 @@
         .option-btn { 
             background-color: #f4f4f4; border: 2px solid var(--border); padding: 15px; 
             text-align: left; border-radius: 5px; cursor: pointer; font-size: 16px; 
-            transition: all 0.2s; font-family: inherit; 
+            transition: all 0.2s; font-family: inherit; display: flex; justify-content: space-between;
         }
         .option-btn:hover:not(:disabled) { background-color: #e0e0e0; border-color: #999; }
         .option-btn.correct { background-color: #d4edda; border-color: var(--correct); color: #155724; font-weight: bold; }
         .option-btn.wrong { background-color: #f8d7da; border-color: var(--wrong); color: #721c24; }
+        .option-btn.selected { background-color: #fff3cd; border-color: var(--selected); font-weight: bold; }
         .option-btn:disabled { cursor: not-allowed; }
         
         .controls { margin-top: 25px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -81,9 +82,12 @@
 
     <div class="menu">
         <button id="btn-study" class="active" onclick="setMode('study')">📖 Обучение</button>
-        <button id="btn-exam" onclick="setMode('exam')">📝 Экзамен (20 вопросов)</button>
+        <button id="btn-exam" onclick="setMode('exam')">📝 Экзамен</button>
         <button id="btn-flash" onclick="setMode('flash')">🔄 Флеш-карты</button>
         <button id="btn-marathon" onclick="setMode('marathon')">🏆 Марафон</button>
+        <button id="btn-signs" onclick="setMode('signs')">🚨 Знаки бедствия</button>
+        <button id="btn-fires" onclick="setMode('fires')">🔥 Костры</button>
+        <button id="btn-knots" onclick="setMode('knots')">🪢 Узлы</button>
         <button id="btn-stats" onclick="setMode('stats')">📊 Профиль</button>
     </div>
 
@@ -124,17 +128,17 @@
         { id: 10, question: "Какой новый род войск был создан 12 ноября 2025 года?", options: ["Войска интернет-технологий", "Информационные войска", "Сверхзвуковые войска", "Войска беспилотных систем"], correct: [3], image: null },
         { id: 11, question: "Какую среднюю численность имеет дивизия?", options: ["360-750 человек", "750-2500 человек", "2500-7500 человек", "4500-22000 человек"], correct: [3], image: null },
         { id: 12, question: "Нарукавная нашивка какой воинской части приведена на изображении?", options: ["242-й учебный центр подготовки младших специалистов ВДВ", "45-я отдельная гвардейская орденов Кутузова и Александра Невского бригада специального назначения", "277-ой бомбардировочный авиационный полк", "Отдельная орденов Суворова, Жукова, Ленина и Октябрьской Революции Краснознамённая дивизия оперативного назначения имени Ф.Э. Дзержинского"], correct: [2], image: "img/q12.jpg" },
-        { id: 13, question: "Расположите части и соединения в иерархичном порядке возрастания:", options: ["Корпус", "Дивизия", "Взвод", "Фронт"], correct: [2, 1, 0, 3], image: null, customNote: "Правильный порядок: Взвод (В) -> Дивизия (Б) -> Корпус (А) -> Фронт (Г)" },
+        { id: 13, question: "Расположите части и соединения в иерархичном порядке возрастания:", options: ["Корпус", "Дивизия", "Взвод", "Фронт"], correct: [2, 1, 0, 3], image: null, type: 'order', customNote: "Правильный порядок: Взвод (В) -> Дивизия (Б) -> Корпус (А) -> Фронт (Г)" },
         { id: 14, question: "Что из указанного относится к объединениям?", options: ["Дивизион", "Рота", "Бригада", "Армия"], correct: [3], image: null },
         { id: 15, question: "Какие воинские формирования входят в состав взвода?", options: ["Батальоны", "Взвода", "Отделения", "Дивизионы"], correct: [2], image: null },
         { id: 16, question: "Какая государственная награда изображена:", options: ["Медаль ордена «За заслуги перед Отечеством»", "Медаль Ушакова", "Медаль Суворова", "Медаль Жукова"], correct: [1], image: "img/q16.jpg" },
         { id: 17, question: "Какой ведомственной наградой Министерства обороны Российской Федерации награждаются за заслуги в поддержании боеготовности Вооруженных Сил Российской Федерации; за усердие и отличие по службе в Вооруженных Силах Российской Федерации?", options: ["Медаль Министерства обороны Российской Федерации «За воинскую доблесть»", "Медаль Министерства обороны Российской Федерации «За отличие в военной службе»", "Медаль Министерства обороны Российской Федерации «Генерал армии Маргелов»", "Медаль Министерства обороны Российской Федерации «За укрепление боевого содружества»"], correct: [1], image: null },
-        { id: 18, question: "Какая из приведенных лент соответствует ленте Медали Министерства обороны Российской Федерации «За отличие в военной службе» II степени?", options: ["А", "Б", "В", "Г"], correct: [1], image: "img/q18.jpg" },
+        { id: 18, question: "Какая из приведенных лент соответствует ленте Медали Министерства обороны Российской Федерации «За отличие в военной службе» II степени?", options: ["А", "Б", "В", "Г"], correct: [2], image: "img/q18.jpg" },
         { id: 19, question: "При каком правителе был учрежден Орден Святого Георгия?", options: ["Николай II", "Петр I", "Павел I", "Екатерина II"], correct: [3], image: null },
         { id: 20, question: "О какой советской государственной награде идет речь? «Изначально предусматривалось, что награда будет иметь четыре степени и носиться на чёрно-жёлтой ленте — цветов дыма и пламени. Она фактически повторяла цвета ленты Георгиевского креста — высшей солдатской награды времен Первой мировой войны».", options: ["Орден Славы", "Орден «Победа»", "Орден «За личное мужество»", "Орден Ленина"], correct: [0], image: null },
         { id: 21, question: "Укажите название описанной тактики: «В ходе Сталинградской битвы Красная армия применила эту тактику, нанеся фланговые удары по противнику и замкнув кольцо окружения вокруг 6-й армии Паулюса. Это привело к уничтожению более сотни вражеских частей общей численностью 330 тысяч солдат и офицеров».", options: ["«Свинья»", "«Клещи»", "Тактика обратного маневра", "«Змейка»"], correct: [1], image: null },
         { id: 22, question: "Укажите название построение описание которого приведено ниже: «Построение, являвшееся распространенным приемом действий русской пехоты при угрозе кавалерийской атаки. Среди эпизодов Отечественной войны 1812 года, где русская пехота применяла это построение, наибольшую известность получили бой 27-й пехотной дивизии Д.П. Неверовского под Красным и действия Лейб-гвардии Измайловского и Литовского полков у Семеновского оврага в Бородинской битве».", options: ["«Полчный ряд»", "Каре", "Кильватерная колонна", "Расчлененный строй"], correct: [1], image: null },
-        { id: 23, question: "Какой может быть бой?", options: ["Оборонительный", "Общевойсковой", "Быстрый", "Морской", "Фланговый", "Стремительный", "Воздушный", "Противовоздушный"], correct: [1, 3, 4, 6, 7], image: null },
+        { id: 23, question: "Какой может быть бой?", options: ["Оборонительный", "Общевойсковой", "Быстрый", "Морской", "Фланговый", "Стремительный", "Воздушный", "Противовоздушный"], correct: [1, 3, 6, 7], image: null, type: 'multi' },
         { id: 24, question: "Укажите кодовое название операции по прорыву блокады Ленинграда, которую Ставка Верховного Главнокомандования приняла решение провести в январе 1943 года:", options: ["«Барбаросса»", "«Кольцо»", "«Искра»", "«Тайфун»"], correct: [2], image: null },
         { id: 25, question: "В ходе штурма Суджи в марте 2025 года российские военнослужащие использовали тактику внезапного штурма с помощью скрытого захода по подземным коммуникациям. Они пробирались в тыл подразделений ВСУ по неработающему магистральному газопроводу «Уренгой – Помары – Ужгород», пройдя за два дня около 15 км. По приказу командования бойцы одновременно выбрались на поверхность в районе промзоны Суджи и атаковали подразделения ВСУ. Укажите кодовое название этой операции:", options: ["«Стрела»", "«Поток»", "«Прыжок»", "«Дырокол»"], correct: [1], image: null },
         { id: 26, question: "Укажите изображение, на котором приведена граната:", options: ["А", "Б", "В", "Г"], correct: [2], image: "img/q26.jpg" },
@@ -143,7 +147,7 @@
         { id: 29, question: "Укажите название современной техники, изображенной на фото:", options: ["Ми-38", "Ми-171А3", "Ми-24", "Ка-32А11М"], correct: [2], image: "img/q29.jpg" },
         { id: 30, question: "Какая масса АК-74М со снаряжённым магазином?", options: ["2,8 кг", "3,0 кг", "3,3 кг", "3,6 кг"], correct: [3], image: null },
         { id: 31, question: "Укажите название современной техники ВМФ России, изображенной на фото:", options: ["Малый десантный корабль на воздушной подушке проекта 1232.2 «Зубр»", "Эскадренный миноносец проекта 956 «Бессстрашный»", "Тяжелый авианесущий крейсер проекта 1143.5 «Адмирал Флота Советского Союза Кузнецов»", "Сторожевой корабль проекта 1161К «Татарстан»"], correct: [2], image: "img/q31.jpg" },
-        { id: 32, question: "На каком из приведенных фото изображен Tavor X95?", options: ["А", "Б", "В", "Г"], correct: [1], image: "img/q32.jpg" },
+        { id: 32, question: "На каком из приведенных фото изображен Tavor X95?", options: ["А", "Б", "В", "Г"], correct: [2], image: "img/q32.jpg" },
         { id: 33, question: "Укажите название военной техники НАТО, изображенной на фото:", options: ["M1A2 «Абрамс»", "Leopard 2A6", "Challenger 2", "C1 Ariete"], correct: [2], image: "img/q33.jpg" },
         { id: 34, question: "Укажите название воздушного судна НАТО, изображенного на фото:", options: ["JAS 39 Gripen", "F-16", "Eurofighter Typhoon", "Tornado"], correct: [2], image: "img/q34.jpg" },
         { id: 35, question: "Укажите название иностранного исторического оружия, изображенного на фото:", options: ["Зульфикар", "Фальшион", "Романский меч", "Спата"], correct: [2], image: "img/q35.jpg" },
@@ -157,7 +161,7 @@
         { id: 43, question: "Назовите правителя, который возглавил государство после Екатерины II «Великой»?", options: ["Павел I", "Александр I", "Елизавета Петровна", "Петр II"], correct: [0], image: null },
         { id: 44, question: "Укажите Героя России представленного на фото:", options: ["Старостин Антон Игоревич", "Белов Степан Михайлович", "Горбоконенко Павел Александрович", "Сизов Илья Андреевич"], correct: [3], image: "img/q44.jpg" },
         { id: 45, question: "Укажите Героя Великой Отечественной войны по описанию его подвига: «За годы войны Герой пять раз горел в танке, был ранен шесть раз, в том числе получил четыре тяжелых ранения, перенес 17 хирургических операций, но каждый раз из госпиталя возвращался на фронт. Продолжил воевать даже после ранения в бедро, после чего одна нога у него стала короче другой на 4 см и перестала сгибаться в колене. За время боевых действий он уничтожил 36 немецких танков и самоходных орудий. Участвовал в рейдах в тыл противника. В ходе одного из таких рейдов советские бойцы освободили и удерживали до подхода главных сил город Чортков на Днестре, за что Герой был удостоен звания Героя Советского Союза».", options: ["Бочковский Владимир Александрович", "Кожедуб Иван Никитович", "Лапшов Иван Антонович", "Попов Дмитрий Алексеевич"], correct: [0], image: null },
-        { id: 46, question: "На каком из представленных изображений представлен Михаил Илларионович Кутузов?", options: ["А", "Б", "В", "Г"], correct: [1], image: "img/q46.jpg" },
+        { id: 46, question: "На каком из представленных изображений представлен Михаил Илларионович Кутузов?", options: ["А", "Б", "В", "Г"], correct: [2], image: "img/q46.jpg" },
         { id: 47, question: "Запишите слово, которое пропущено в тексте Государственного гимна Российской Федерации «От южных морей до полярного края Раскинулись наши леса и поля. Одна ты на свете! Одна ты такая - Хранимая Богом ... земля!»", options: ["Родная", "Большая", "Могучая", "Сильная"], correct: [0], image: null },
         { id: 48, question: "Укажите правильное описание Государственного флага Российской Федерации.", options: ["Три горизонтальные полосы: белого цвета — нижняя, голубого цвета — средняя, красного цвета — верхняя", "Три горизонтальные полосы: белая цвета — нижняя, желтого цвета — средняя, черного цвета — верхняя", "Три горизонтальные полосы: белого цвета — нижняя, синего цвета — средняя, красного цвета — верхняя", "Три горизонтальные полосы: красного цвета — нижняя, синего цвета — средняя, белого цвета — верхняя"], correct: [3], image: null },
         { id: 49, question: "Когда был утвержден современный государственный гимн Российской Федерации", options: ["30 декабря 2000 года", "1 января 2003 года", "31 декабря 1993 года", "31 января 1997 года"], correct: [0], image: null },
@@ -180,7 +184,7 @@
         { id: 66, question: "Какое событие из указанных произошло в 1242 году?", options: ["Невская битва", "Ледовое побоище", "Куликовская битва", "Битва на реке Калке"], correct: [1], image: null },
         { id: 67, question: "Назовите дату вывода советских войск из Афганистана?", options: ["4 августа 1989 года", "15 февраля 1989 года", "12 мая 1989 года", "3 декабря 1989 года"], correct: [1], image: null },
         { id: 68, question: "Какое событие из приведенных ниже происходило с 8 сентября 1941 года по 27 января 1944 года?", options: ["Битва за Москву", "Блокада Ленинграда", "Битва за Кавказ", "Оборона Одессы"], correct: [1], image: null },
-        { id: 69, question: "Расположите события в хронологическом порядке:", options: ["Освобождение Варшавы", "Оборона Брестской крепости", "Курская битва", "Оборона Одессы"], correct: [1, 3, 2, 0], image: null, customNote: "Правильный порядок: Оборона Брестской крепости (Б) -> Оборона Одессы (Г) -> Курская битва (В) -> Освобождение Варшавы (А)" },
+        { id: 69, question: "Расположите события в хронологическом порядке:", options: ["Освобождение Варшавы", "Оборона Брестской крепости", "Курская битва", "Оборона Одессы"], correct: [1, 3, 2, 0], image: null, type: 'order', customNote: "Правильный порядок: Оборона Брестской крепости (Б) -> Оборона Одессы (Г) -> Курская битва (В) -> Освобождение Варшавы (А)" },
         { id: 70, question: "Когда была завершена Операция по освобождению Курской области от ВСУ?", options: ["26 апреля 2025 года", "23 сентября 2024 года", "19 августа 2023 года", "16 апреля 2024 года"], correct: [0], image: null },
         { id: 71, question: "Какое слово пропущено в военной присяге? «Я, (фамилия, имя, отчество), торжественно присягаю на верность своему Отечеству - Российской Федерации. Клянусь свято соблюдать Конституцию Российской Федерации, строго выполнять требования воинских уставов, приказы командиров и начальников. Клянусь достойно исполнять воинский долг, мужественно защищать свободу, независимость и конституционный строй России, ________ и Отечество».", options: ["Мир", "Народ", "Территорию", "Людей"], correct: [1], image: null },
         { id: 72, question: "Какой воинский ритуал представлен на фото?", options: ["Утренний осмотр", "Вечерняя поверка", "Строевой смотр", "Вручение стрелкового оружия"], correct: [2], image: "img/q72.jpg" },
@@ -195,6 +199,38 @@
     ];
 
     // ==========================================
+    // БАЗЫ ДЛЯ НОВЫХ РЕЖИМОВ (пока пустые, заполни сам)
+    // ==========================================
+    const signsQuestions = [
+        { id: 101, question: "Что означает этот знак?", options: ["Нужен врач", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 0, image: "img/sign_1.jpg" },
+        { id: 102, question: "Что означает этот знак?", options: ["Нужен врач", "Нужны медикаменты", "Следовать дальше не в состоянии", "Нужны продовольствие и вода"], correct: 1, image: "img/sign_2.jpg" },
+        // Добавь остальные знаки сюда по аналогии
+    ];
+
+    const firesQuestions = [
+        { id: 201, question: "Как называется этот костер?", options: ["Колодец", "Пирамида", "Охотничий", "Звёздный"], correct: 0, image: "img/fire_1.jpg" },
+        { id: 202, question: "Как называется этот костер?", options: ["Колодец", "Пирамида", "Охотничий", "Звёздный"], correct: 1, image: "img/fire_2.jpg" },
+        { id: 203, question: "Как называется этот костер?", options: ["Колодец", "Пирамида", "Охотничий", "Звёздный"], correct: 2, image: "img/fire_3.jpg" },
+        { id: 204, question: "Как называется этот костер?", options: ["Колодец", "Пирамида", "Охотничий", "Звёздный"], correct: 3, image: "img/fire_4.jpg" },
+        { id: 205, question: "Как называется этот костер?", options: ["Нодья", "Шалаш", "Таёжный", "Колодец"], correct: 0, image: "img/fire_5.jpg" },
+        { id: 206, question: "Как называется этот костер?", options: ["Нодья", "Шалаш", "Таёжный", "Колодец"], correct: 1, image: "img/fire_6.jpg" },
+        { id: 207, question: "Как называется этот костер?", options: ["Нодья", "Шалаш", "Таёжный", "Колодец"], correct: 2, image: "img/fire_7.jpg" }
+    ];
+
+    const knotsQuestions = [
+        { id: 301, question: "Как называется этот узел?", options: ["Проводник", "Восьмерка", "Булинь", "Схватывающий"], correct: 0, image: "img/knot_1.jpg" },
+        { id: 302, question: "Как называется этот узел?", options: ["Проводник", "Восьмерка", "Булинь", "Схватывающий"], correct: 1, image: "img/knot_2.jpg" },
+        { id: 303, question: "Как называется этот узел?", options: ["Проводник", "Восьмерка", "Булинь", "Схватывающий"], correct: 2, image: "img/knot_3.jpg" },
+        { id: 304, question: "Как называется этот узел?", options: ["Проводник", "Восьмерка", "Булинь", "Схватывающий"], correct: 3, image: "img/knot_4.jpg" },
+        { id: 305, question: "Как называется этот узел?", options: ["Прямой", "Стремя", "Брамшкотовый", "Встречный"], correct: 0, image: "img/knot_5.jpg" },
+        { id: 306, question: "Как называется этот узел?", options: ["Прямой", "Стремя", "Брамшкотовый", "Встречный"], correct: 1, image: "img/knot_6.jpg" },
+        { id: 307, question: "Как называется этот узел?", options: ["Прямой", "Стремя", "Брамшкотовый", "Встречный"], correct: 2, image: "img/knot_7.jpg" },
+        { id: 308, question: "Как называется этот узел?", options: ["Прямой", "Стремя", "Брамшкотовый", "Встречный"], correct: 3, image: "img/knot_8.jpg" },
+        { id: 309, question: "Как называется этот узел?", options: ["Ткацкий", "Дубовый", "Проводник", "Восьмерка"], correct: 0, image: "img/knot_9.jpg" },
+        { id: 310, question: "Как называется этот узел?", options: ["Ткацкий", "Дубовый", "Проводник", "Восьмерка"], correct: 1, image: "img/knot_10.jpg" }
+    ];
+
+    // ==========================================
     // СИСТЕМА СТАТИСТИКИ И ПРОФИЛЯ
     // ==========================================
     let userProfile = localStorage.getItem('userProfile');
@@ -202,17 +238,19 @@
         marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 
     };
     let answersSinceSync = 0;
+    let orderState = []; // Для вопросов с порядком
     
     function saveStats() { localStorage.setItem('userStats', JSON.stringify(stats)); }
     
     function initProfile() {
-        if (!userProfile) {
-            userProfile = prompt("Введите ваше имя или фамилию (для статистики):");
+        // Бесконечный цикл, пока не введет имя
+        while (!userProfile || userProfile.trim() === "") {
+            userProfile = prompt("Введите ваше имя или фамилию (без этого вход невозможен):");
             if (userProfile && userProfile.trim() !== "") { 
                 userProfile = userProfile.trim(); 
                 localStorage.setItem('userProfile', userProfile); 
-            } else { 
-                userProfile = "Неизвестный"; 
+            } else {
+                alert("Пожалуйста, введите имя. Без имени вход на сайт запрещен.");
             }
         }
     }
@@ -221,38 +259,27 @@
     // ОТПРАВКА В GOOGLE FORMS
     // ==========================================
     function sendFullProfile(lastModeName) {
-        if (!FORM_URL || !ENTRIES.name) { 
-            console.log('Google Forms не настроены'); 
-            return; 
-        }
+        if (!FORM_URL || !ENTRIES.name) { return; }
         
         let bestExam = 0;
         if (stats.examHistory && stats.examHistory.length > 0) {
             bestExam = Math.max(...stats.examHistory.map(e => e.score));
         }
-        
-        const accuracy = stats.studyAnswered > 0 
-            ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) 
-            : 0;
+        const accuracy = stats.studyAnswered > 0 ? Math.round((stats.studyCorrect / stats.studyAnswered) * 100) : 0;
         
         const formData = new URLSearchParams();
         formData.append(ENTRIES.name, userProfile);
-        formData.append(ENTRIES.bestExam, bestExam);
-        formData.append(ENTRIES.examCount, stats.examHistory ? stats.examHistory.length : 0);
-        formData.append(ENTRIES.marathonBest, stats.marathonBest || 0);
-        formData.append(ENTRIES.studyCorrect, stats.studyCorrect || 0);
-        formData.append(ENTRIES.studyTotal, stats.studyAnswered || 0);
-        formData.append(ENTRIES.studyAccuracy, accuracy);
-        formData.append(ENTRIES.flashcardViewed, stats.flashcardViewed || 0);
+        formData.append(ENTRIES.bestExam, String(bestExam));
+        formData.append(ENTRIES.examCount, String(stats.examHistory ? stats.examHistory.length : 0));
+        formData.append(ENTRIES.marathonBest, String(stats.marathonBest || 0));
+        formData.append(ENTRIES.studyCorrect, String(stats.studyCorrect || 0));
+        formData.append(ENTRIES.studyTotal, String(stats.studyAnswered || 0));
+        formData.append(ENTRIES.studyAccuracy, String(accuracy));
+        formData.append(ENTRIES.flashcardViewed, String(stats.flashcardViewed || 0));
         formData.append(ENTRIES.lastMode, lastModeName || currentMode);
         formData.append(ENTRIES.date, new Date().toLocaleString('ru-RU'));
         
-        fetch(FORM_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: formData.toString()
-        })
+        fetch(FORM_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: formData.toString() })
         .then(() => console.log('✅ Отправлено в Google Forms'))
         .catch(error => console.error('❌ Ошибка:', error));
     }
@@ -262,48 +289,137 @@
     // ==========================================
     let currentMode = 'study', currentIndex = 0, studyQuestions = [], examQuestions = [], userAnswers = {}, showFlashcardAnswer = false, marathonStreak = 0, currentMarathonQ = null;
     const app = document.getElementById('app');
-    const btnStudy = document.getElementById('btn-study'), btnExam = document.getElementById('btn-exam'), btnFlash = document.getElementById('btn-flash'), btnMarathon = document.getElementById('btn-marathon'), btnStats = document.getElementById('btn-stats');
+    const btnStudy = document.getElementById('btn-study'), btnExam = document.getElementById('btn-exam'), btnFlash = document.getElementById('btn-flash'), btnMarathon = document.getElementById('btn-marathon'), btnStats = document.getElementById('btn-stats'), btnSigns = document.getElementById('btn-signs'), btnFires = document.getElementById('btn-fires'), btnKnots = document.getElementById('btn-knots');
 
     function setMode(mode) {
-        currentMode = mode; currentIndex = 0; userAnswers = {}; showFlashcardAnswer = false;
-        [btnStudy, btnExam, btnFlash, btnMarathon, btnStats].forEach(btn => btn.classList.remove('active'));
+        currentMode = mode; currentIndex = 0; userAnswers = {}; showFlashcardAnswer = false; orderState = [];
+        [btnStudy, btnExam, btnFlash, btnMarathon, btnStats, btnSigns, btnFires, btnKnots].forEach(btn => btn.classList.remove('active'));
+        
         if (mode === 'study') { btnStudy.classList.add('active'); studyQuestions = shuffle([...allQuestions]); renderStudy(); } 
         else if (mode === 'exam') { btnExam.classList.add('active'); startExam(); } 
         else if (mode === 'flash') { btnFlash.classList.add('active'); renderFlashcard(); } 
         else if (mode === 'marathon') { btnMarathon.classList.add('active'); startMarathon(); } 
+        else if (mode === 'signs') { btnSigns.classList.add('active'); renderImageQuiz(signsQuestions, 'Знаки бедствия'); }
+        else if (mode === 'fires') { btnFires.classList.add('active'); renderImageQuiz(firesQuestions, 'Костры'); }
+        else if (mode === 'knots') { btnKnots.classList.add('active'); renderImageQuiz(knotsQuestions, 'Узлы'); }
         else if (mode === 'stats') { btnStats.classList.add('active'); renderStats(); }
     }
     
     function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
 
-    // --- РЕЖИМ ОБУЧЕНИЯ ---
+    // --- РЕЖИМ ОБУЧЕНИЯ (с поддержкой order и multi) ---
     function renderStudy() {
         if (currentIndex >= studyQuestions.length) { 
             sendFullProfile('Обучение (завершено)');
             answersSinceSync = 0;
-            
             app.innerHTML = `<div class="result-screen"><h2>Обучение завершено!</h2><p>Вы прошли все доступные вопросы.</p><p style="color: var(--correct); font-weight: bold;">✅ Результаты отправлены командиру</p><button class="btn-primary" onclick="setMode('study')">Начать заново</button></div>`; 
             return; 
         }
         const q = studyQuestions[currentIndex];
         let html = `<div class="progress">Вопрос ${currentIndex + 1} из ${studyQuestions.length}</div><div class="question-text">${q.question}</div>`;
         if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
-        html += `<div class="options">`;
-        q.options.forEach((opt, index) => { html += `<button class="option-btn" onclick="checkStudyAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`; });
-        html += `</div>`;
-        if (q.customNote) { html += `<div class="custom-note">${q.customNote}</div>`; }
-        html += `<div class="controls"><button class="btn-primary" id="next-btn" style="display:none;" onclick="nextStudyQuestion()">Следующий вопрос →</button></div>`;
+        
+        html += `<div class="options" id="options-container">`;
+        
+        if (q.type === 'order') {
+            html += `<p style="font-size:14px; color:#666; margin-bottom:5px;">Нажимайте на варианты в правильном порядке. Цифры покажут ваш выбор.</p>`;
+            q.options.forEach((opt, index) => { 
+                html += `<button class="option-btn" id="opt-${index}" onclick="selectOrderAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`; 
+            });
+            html += `</div><div class="controls"><button class="btn-primary" id="check-order-btn" style="display:none;" onclick="checkOrderAnswer(${JSON.stringify(q.correct)})">Проверить</button></div>`;
+        } else if (q.type === 'multi') {
+            html += `<p style="font-size:14px; color:#666; margin-bottom:5px;">Выберите все правильные варианты, затем нажмите «Проверить».</p>`;
+            q.options.forEach((opt, index) => { 
+                html += `<button class="option-btn" id="opt-${index}" onclick="toggleMultiAnswer(${index})">${opt}</button>`; 
+            });
+            html += `</div><div class="controls"><button class="btn-primary" id="check-multi-btn" onclick="checkMultiAnswer(${JSON.stringify(q.correct)})">Проверить</button></div>`;
+        } else {
+            q.options.forEach((opt, index) => { 
+                html += `<button class="option-btn" onclick="checkStudyAnswer(${index}, ${JSON.stringify(q.correct)})">${opt}</button>`; 
+            });
+            html += `</div>`;
+            if (q.customNote) { html += `<div class="custom-note">${q.customNote}</div>`; }
+            html += `<div class="controls"><button class="btn-primary" id="next-btn" style="display:none;" onclick="nextStudyQuestion()">Следующий вопрос →</button></div>`;
+        }
         app.innerHTML = html;
+    }
+    
+    // Логика для order вопросов
+    function selectOrderAnswer(index, correct) {
+        if (orderState.includes(index)) {
+            orderState = orderState.filter(i => i !== index);
+            document.getElementById(`opt-${index}`).innerText = document.getElementById(`opt-${index}`).innerText.replace(/^\d+\.\s/, '');
+        } else {
+            if (orderState.length >= 4) return;
+            orderState.push(index);
+            document.getElementById(`opt-${index}`).innerText = `${orderState.length}. ` + document.getElementById(`opt-${index}`).innerText;
+        }
+        document.getElementById('check-order-btn').style.display = orderState.length === 4 ? 'block' : 'none';
+    }
+
+    function checkOrderAnswer(correctOrder) {
+        document.getElementById('check-order-btn').style.display = 'none';
+        const isCorrect = JSON.stringify(orderState) === JSON.stringify(correctOrder);
+        
+        document.querySelectorAll('.option-btn').forEach((btn, index) => {
+            btn.disabled = true;
+            if (correctOrder.includes(index)) btn.classList.add('correct');
+            if (!isCorrect && orderState.includes(index) && !correctOrder.includes(index)) btn.classList.add('wrong');
+        });
+
+        if (isCorrect) {
+            stats.studyAnswered++; stats.studyCorrect++; answersSinceSync++; saveStats();
+            setTimeout(() => { nextStudyQuestion(); }, 1000);
+        } else {
+            stats.studyAnswered++; saveStats();
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.innerText = 'Продолжить';
+            btn.onclick = () => nextStudyQuestion();
+            document.querySelector('.controls').appendChild(btn);
+        }
+    }
+
+    // Логика для multi вопросов
+    let multiState = [];
+    function toggleMultiAnswer(index) {
+        if (multiState.includes(index)) {
+            multiState = multiState.filter(i => i !== index);
+            document.getElementById(`opt-${index}`).classList.remove('selected');
+        } else {
+            multiState.push(index);
+            document.getElementById(`opt-${index}`).classList.add('selected');
+        }
+    }
+
+    function checkMultiAnswer(correctIndices) {
+        document.getElementById('check-multi-btn').style.display = 'none';
+        const isCorrect = correctIndices.every(val => multiState.includes(val)) && multiState.length === correctIndices.length;
+        
+        document.querySelectorAll('.option-btn').forEach((btn, index) => {
+            btn.disabled = true;
+            if (correctIndices.includes(index)) btn.classList.add('correct');
+            if (!isCorrect && multiState.includes(index) && !correctIndices.includes(index)) btn.classList.add('wrong');
+        });
+
+        if (isCorrect) {
+            stats.studyAnswered++; stats.studyCorrect++; answersSinceSync++; saveStats();
+            setTimeout(() => { nextStudyQuestion(); }, 1000);
+        } else {
+            stats.studyAnswered++; saveStats();
+            const btn = document.createElement('button');
+            btn.className = 'btn-primary';
+            btn.innerText = 'Продолжить';
+            btn.onclick = () => nextStudyQuestion();
+            document.querySelector('.controls').appendChild(btn);
+        }
     }
     
     function checkStudyAnswer(selectedIndex, correctIndices) {
         const buttons = document.querySelectorAll('.option-btn'); 
         const isCorrect = correctIndices.includes(selectedIndex);
         stats.studyAnswered++; 
-        if (isCorrect) {
-            stats.studyCorrect++; 
-            answersSinceSync++;
-        }
+        if (isCorrect) { stats.studyCorrect++; answersSinceSync++; }
         saveStats();
         
         buttons.forEach((btn, index) => { 
@@ -312,10 +428,7 @@
             else if (index === selectedIndex) { btn.classList.add('wrong'); } 
         });
 
-        if (answersSinceSync >= 25) {
-            answersSinceSync = 0;
-            sendFullProfile('Обучение (в процессе)');
-        }
+        if (answersSinceSync >= 25) { answersSinceSync = 0; sendFullProfile('Обучение (в процессе)'); }
         
         if (isCorrect) { 
             setTimeout(() => { nextStudyQuestion(); }, 800); 
@@ -324,15 +437,53 @@
         }
     }
     
-    function nextStudyQuestion() { currentIndex++; renderStudy(); }
+    function nextStudyQuestion() { 
+        currentIndex++; 
+        orderState = []; multiState = []; 
+        renderStudy(); 
+    }
+
+    // --- НОВЫЕ РЕЖИМЫ (Знаки, Костры, Узлы) ---
+    function renderImageQuiz(questions, modeName) {
+        if (questions.length === 0) {
+            app.innerHTML = `<div class="result-screen"><h2>Режим в разработке</h2><p>Скоро здесь появятся вопросы!</p><button class="btn-primary" onclick="setMode('study')">Вернуться</button></div>`;
+            return;
+        }
+        
+        const q = questions[Math.floor(Math.random() * questions.length)];
+        let html = `<div class="progress">Режим: ${modeName}</div><div class="question-text">${q.question}</div>`;
+        if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
+        html += `<div class="options">`;
+        q.options.forEach((opt, index) => { 
+            html += `<button class="option-btn" onclick="checkImageQuizAnswer(${index}, ${q.correct}, '${modeName}')">${opt}</button>`; 
+        });
+        html += `</div><div class="controls"><button class="btn-primary" id="next-image-btn" style="display:none;" onclick="renderImageQuiz(${JSON.stringify(questions).replace(/"/g, '&quot;')}, '${modeName}')">Следующий вопрос →</button></div>`;
+        app.innerHTML = html;
+    }
+
+    function checkImageQuizAnswer(selectedIndex, correctIndex, modeName) {
+        const buttons = document.querySelectorAll('.option-btn');
+        const isCorrect = selectedIndex === correctIndex;
+        
+        buttons.forEach((btn, index) => {
+            btn.disabled = true;
+            if (index === correctIndex) btn.classList.add('correct');
+            else if (index === selectedIndex) btn.classList.add('wrong');
+        });
+
+        if (isCorrect) {
+            setTimeout(() => {
+                // Для простоты берем следующую случайную картинку из массива (передаем его через замыкание не получится, используем глобальный поиск)
+                let questionsArray = modeName === 'Знаки бедствия' ? signsQuestions : (modeName === 'Костры' ? firesQuestions : knotsQuestions);
+                renderImageQuiz(questionsArray, modeName);
+            }, 800);
+        } else {
+            document.getElementById('next-image-btn').style.display = 'block';
+        }
+    }
 
     // --- РЕЖИМ ЭКЗАМЕНА ---
-    function startExam() { 
-        const shuffled = shuffle([...allQuestions]); 
-        examQuestions = shuffled.slice(0, Math.min(20, shuffled.length)); 
-        currentIndex = 0; 
-        renderExam(); 
-    }
+    function startExam() { const shuffled = shuffle([...allQuestions]); examQuestions = shuffled.slice(0, Math.min(20, shuffled.length)); currentIndex = 0; renderExam(); }
     
     function renderExam() {
         if (currentIndex >= examQuestions.length) { renderExamResults(); return; }
@@ -350,10 +501,8 @@
     }
     
     function selectExamAnswer(index) {
-        const q = examQuestions[currentIndex]; 
-        if (!userAnswers[q.id]) { userAnswers[q.id] = []; }
-        if (userAnswers[q.id].includes(index)) { userAnswers[q.id] = userAnswers[q.id].filter(i => i !== index); } 
-        else { userAnswers[q.id].push(index); }
+        const q = examQuestions[currentIndex]; if (!userAnswers[q.id]) { userAnswers[q.id] = []; }
+        if (userAnswers[q.id].includes(index)) { userAnswers[q.id] = userAnswers[q.id].filter(i => i !== index); } else { userAnswers[q.id].push(index); }
         if (q.correct.length === 1 && userAnswers[q.id].length > 1) { userAnswers[q.id] = [index]; }
         renderExam(); 
     }
@@ -371,7 +520,6 @@
         const score = Math.round((correctCount / examQuestions.length) * 100);
         stats.examHistory.push({ date: new Date().toLocaleDateString('ru-RU'), score: score, total: examQuestions.length, correct: correctCount }); 
         saveStats();
-        
         sendFullProfile('Экзамен');
         
         let grade = "2"; if (score >= 80) grade = "5"; else if (score >= 60) grade = "4"; else if (score >= 40) grade = "3";
@@ -380,9 +528,7 @@
 
     // --- РЕЖИМ ФЛЕШ-КАРТ ---
     function renderFlashcard() {
-        const q = allQuestions[Math.floor(Math.random() * allQuestions.length)]; 
-        stats.flashcardViewed++; 
-        saveStats();
+        const q = allQuestions[Math.floor(Math.random() * allQuestions.length)]; stats.flashcardViewed++; saveStats();
         let html = `<div class="progress">Режим повторения</div><div class="question-text">${q.question}</div>`;
         if (q.image) { html += `<img src="${q.image}" alt="Изображение" class="question-image" onerror="this.style.display='none'">`; }
         let correctAnswersText = q.correct.map(idx => q.options[idx]).join(', ');
@@ -390,7 +536,6 @@
         html += `<div class="flashcard-reveal ${showFlashcardAnswer ? 'show' : ''}"><strong>Правильный ответ:</strong><br>${correctAnswersText}</div><div class="controls"><button class="btn-primary" onclick="toggleFlashcard()">${showFlashcardAnswer ? 'Скрыть ответ' : 'Показать ответ'}</button><button class="btn-primary" style="background-color: #666;" onclick="nextFlashcard()">Следующая карточка →</button></div>`;
         app.innerHTML = html;
     }
-    
     function toggleFlashcard() { showFlashcardAnswer = !showFlashcardAnswer; renderFlashcard(); }
     function nextFlashcard() { showFlashcardAnswer = false; renderFlashcard(); }
 
@@ -409,38 +554,18 @@
     }
     
     function checkMarathonAnswer(selectedIndex, correctIndices) {
-        const buttons = document.querySelectorAll('.option-btn'); 
-        const isCorrect = correctIndices.includes(selectedIndex);
-        buttons.forEach((btn, index) => { 
-            btn.disabled = true; 
-            if (correctIndices.includes(index)) { btn.classList.add('correct'); } 
-            else if (index === selectedIndex) { btn.classList.add('wrong'); } 
-        });
-        
-        if (isCorrect) { 
-            marathonStreak++; 
-            if (marathonStreak > stats.marathonBest) { stats.marathonBest = marathonStreak; saveStats(); } 
-            setTimeout(() => { nextMarathonQuestion(); }, 800); 
-        } 
-        else { 
-            sendFullProfile('Марафон');
-            const progressDiv = document.querySelector('.progress'); 
-            progressDiv.innerHTML = `❌ Игра окончена! Вы ответили правильно ${marathonStreak} раз подряд.`; 
-            document.getElementById('marathon-controls').style.display = 'block'; 
-        }
+        const buttons = document.querySelectorAll('.option-btn'); const isCorrect = correctIndices.includes(selectedIndex);
+        buttons.forEach((btn, index) => { btn.disabled = true; if (correctIndices.includes(index)) { btn.classList.add('correct'); } else if (index === selectedIndex) { btn.classList.add('wrong'); } });
+        if (isCorrect) { marathonStreak++; if (marathonStreak > stats.marathonBest) { stats.marathonBest = marathonStreak; saveStats(); } setTimeout(() => { nextMarathonQuestion(); }, 800); } 
+        else { sendFullProfile('Марафон'); const progressDiv = document.querySelector('.progress'); progressDiv.innerHTML = `❌ Игра окончена! Вы ответили правильно ${marathonStreak} раз подряд.`; document.getElementById('marathon-controls').style.display = 'block'; }
     }
 
     // --- РЕЖИМ СТАТИСТИКИ ---
     function renderStats() {
         initProfile();
         let examInfo = "Нет данных";
-        if (stats.examHistory.length > 0) { 
-            const last = stats.examHistory[stats.examHistory.length - 1]; 
-            const best = Math.max(...stats.examHistory.map(e => e.score)); 
-            examInfo = `Последний: ${last.score}% (${last.correct}/${last.total})<br>Лучший: ${best}%`; 
-        }
-        let studyAccuracy = "0%"; 
-        if (stats.studyAnswered > 0) { studyAccuracy = Math.round((stats.studyCorrect / stats.studyAnswered) * 100) + "%"; }
+        if (stats.examHistory.length > 0) { const last = stats.examHistory[stats.examHistory.length - 1]; const best = Math.max(...stats.examHistory.map(e => e.score)); examInfo = `Последний: ${last.score}% (${last.correct}/${last.total})<br>Лучший: ${best}%`; }
+        let studyAccuracy = "0%"; if (stats.studyAnswered > 0) { studyAccuracy = Math.round((stats.studyCorrect / stats.studyAnswered) * 100) + "%"; }
         
         let html = `<h2 style="text-align:center; color: var(--primary); margin-top:0;">📊 Статистика бойца</h2><div style="text-align:center; font-size: 20px; font-weight: bold; margin-bottom: 20px;">${userProfile}</div><div class="stats-card"><div class="stats-row"><span>🏆 Рекорд в Марафоне:</span><strong>${stats.marathonBest} правильных подряд</strong></div><div class="stats-row"><span>📝 Экзамены:</span><strong style="text-align:right;">${examInfo}</strong></div><div class="stats-row"><span>📖 Обучение (всего ответов):</span><strong>${stats.studyAnswered}</strong></div><div class="stats-row"><span>🎯 Точность в обучении:</span><strong>${studyAccuracy}</strong></div><div class="stats-row"><span>🔄 Просмотрено флеш-карт:</span><strong>${stats.flashcardViewed}</strong></div></div>
         <button class="btn-primary copy-btn" onclick="sendFullProfile('Профиль (вручную)')" style="background-color: #27ae60; font-size: 16px;">📤 Отправить результаты командиру</button>
@@ -454,11 +579,7 @@
     }
     
     function resetStats() {
-        if (confirm("Сбросить статистику?")) { 
-            stats = { marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 }; 
-            saveStats(); 
-            renderStats(); 
-        }
+        if (confirm("Сбросить статистику?")) { stats = { marathonBest: 0, examHistory: [], studyAnswered: 0, studyCorrect: 0, flashcardViewed: 0 }; saveStats(); renderStats(); }
     }
 
     // Инициализация при загрузке
